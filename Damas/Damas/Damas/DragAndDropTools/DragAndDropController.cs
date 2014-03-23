@@ -103,7 +103,9 @@ namespace DragAndDrop
             if (_isDraggingRectangle)
             {
                 Rectangle selectionRectangle = GetSelectionRectangle();
+                _spriteBatch.Begin();
                 _spriteBatch.Draw(_selectionTexture, selectionRectangle, Color.White * .4f);
+                _spriteBatch.End();
             }
         }
 

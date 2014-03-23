@@ -19,14 +19,18 @@ namespace Damas
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        GraphicsDeviceManager graphics;
+        SpriteBatch spriteBatch;
+        Texture2D texture;
+
         enum GameState { Start, InGame, GameOver };
         GameState currentGameState = GameState.Start;
         private DragAndDropController<Item> _dragDropController;
         Tablero t1;
        
-        GraphicsDeviceManager graphics;
-        SpriteBatch spriteBatch;
-        Texture2D texture;
+        //Variables para almacenar posicion actual del puntero
+        MouseState _currentMouse;
+        Vector2 _currentMousePosition;          //the current position of the mouse
         
         
 
@@ -37,7 +41,7 @@ namespace Damas
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
             
-            SetWindowSize(800, 650);
+            SetWindowSize(800, 690);
 
             
         }
@@ -129,6 +133,12 @@ namespace Damas
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            //get the current state of the mouse (position, buttons, etc.)
+            _currentMouse = Mouse.GetState();
+
+            //remember the mouseposition for use in this Update and subsequent Draw
+            _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -144,7 +154,7 @@ namespace Damas
 
             spriteBatch.Begin();
            // spriteBatch.Draw(texture, new Vector2(50,20), Color.White);
-           t1.draw(spriteBatch);
+           t1.draw(spriteBatch, _currentMousePosition);
           foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
             spriteBatch.End();
 

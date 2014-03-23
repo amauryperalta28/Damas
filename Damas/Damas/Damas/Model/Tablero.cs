@@ -12,17 +12,22 @@ namespace DragAndDrop.Model
     public class Tablero
     {
        public Casilla[,] casillas = new Casilla[8,8];
+       private Vector2 posicion;
+       Texture2D _whiteSquare;
 
        public Tablero(ContentManager content, SpriteBatch spriteBatch)
-       { 
+       {
+           _whiteSquare = content.Load<Texture2D>("Images/white");
+           //Se inicializa la posicion del tablero
+           posicion = new Vector2(50, 20);
            //Se le asignan las posiciones a cada casilla
 
            for (int i = 0; i < casillas.GetLength(0); i++)
            {
                for (int j = 0; j < casillas.GetLength(1); j++)
                { 
-                     int posicionXPantalla = 50 + (i+1)*64;
-                     int posicionYPantalla = 20 + (j+1)*64;
+                     int posicionXPantalla = 50 + (i)*80;
+                     int posicionYPantalla = 20 + (j)*80;
                      casillas[i,j]= new Casilla(){Posicion = new Vector2(posicionXPantalla,posicionYPantalla)};
                
                }
@@ -59,89 +64,13 @@ namespace DragAndDrop.Model
                         colorEnUso = Colores.White;
                    }
                }
-
+               //Si se va a cambiar de fila, cambiame el color anterior
                if (colorEnUso == Colores.White)
                    colorEnUso = Colores.Black;
                else
                    colorEnUso = Colores.White;
            }
-    /*
-           for (int i = 0; i < casillas.GetLength(1); i++)
-           {
-               if (colorEnUso == Colores.White)
-               {
-                   casillas[i, 0].Color = colorEnUso;
-                   casillas[i, 0].Img = content.Load<Texture2D>("Images/white");
-
-                   casillas[i, 2].Color = colorEnUso;
-                   casillas[i, 2].Img = content.Load<Texture2D>(@"Images/white");
-
-                   casillas[i, 4].Color = colorEnUso;
-                   casillas[i, 4].Img = content.Load<Texture2D>(@"Images/white");
-
-                   casillas[i, 6].Color = colorEnUso;
-                   casillas[i, 6].Img = content.Load<Texture2D>(@"Images/white");
-                   colorEnUso = Colores.Black;
-
-               }
-               else
-               {
-                   casillas[i, 0].Color = colorEnUso;
-                   casillas[i, 0].Img = content.Load<Texture2D>(@"Images/black");
-
-                   casillas[i, 2].Color = colorEnUso;
-                   casillas[i, 2].Img = content.Load<Texture2D>(@"Images/black");
-
-                   casillas[i, 4].Color = colorEnUso;
-                   casillas[i, 4].Img = content.Load<Texture2D>(@"Images/black");
-
-                   casillas[i, 6].Color = colorEnUso;
-                   casillas[i, 6].Img = content.Load<Texture2D>(@"Images/black");
-                   colorEnUso = Colores.White;
-               
-               }
-               colorEnUso = Colores.White;
-               for (int j = 0; j < casillas.GetLength(1); j++)
-               {
-                   if (colorEnUso == Colores.White)
-                   {
-                       casillas[j, 1].Color = colorEnUso;
-                       casillas[j, 1].Img = content.Load<Texture2D>(@"Images/white");
-
-                       casillas[j, 3].Color = colorEnUso;
-                       casillas[j, 3].Img = content.Load<Texture2D>(@"Images/white");
-
-                       casillas[j, 5].Color = colorEnUso;
-                       casillas[j, 5].Img = content.Load<Texture2D>(@"Images/white");
-
-                       casillas[j, 7].Color = colorEnUso;
-                       casillas[j, 7].Img = content.Load<Texture2D>(@"Images/white");
-                       colorEnUso = Colores.Black;
-
-                   }
-                   else
-                   {
-                       casillas[j, 1].Color = colorEnUso;
-                       casillas[j, 1].Img = content.Load<Texture2D>(@"Images/black");
-
-                       casillas[j, 3].Color = colorEnUso;
-                       casillas[j, 3].Img = content.Load<Texture2D>(@"Images/black");
-
-                       casillas[j, 5].Color = colorEnUso;
-                       casillas[j, 5].Img = content.Load<Texture2D>(@"Images/black");
-
-                       casillas[j, 7].Color = colorEnUso;
-                       casillas[j, 7].Img = content.Load<Texture2D>(@"Images/black");
-                       colorEnUso = Colores.White;
-
-                   }
-
-
-               }
-
-           
-           }*/
-
+   
 
        }
 
@@ -202,20 +131,71 @@ namespace DragAndDrop.Model
            return 0;
        }
 
-       public void draw(SpriteBatch spritebatch)
-       { 
+       public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition)
+       {
+           float opacity;
+           Color colorToUse = Color.White;
+           const int _tileSize = 80;
+           Rectangle squareToDrawPosition = new Rectangle();  //the square to draw (local variable to avoid creating a new variable per square)
            // Se recorre el arreglo de casillas
-           for (int j = 0; j < casillas.GetLength(0); j++)
+           for (int y = 0; y < casillas.GetLength(0); y++)
            {
-               for (int i = 0; i < casillas.GetLength(1); i++)
+               for (int x = 0; x < casillas.GetLength(1); x++)
                {
-                   Casilla c1 = casillas[i, j];
+                   //figure out where to draw the square
+                   squareToDrawPosition = new Rectangle((int)(x * _tileSize + posicion.X), (int)(y * _tileSize + posicion.Y), _tileSize, _tileSize);
+
+                   //if we add the x and y value of the tile
+                   //and it is even, we make it one third opaque
+                   if ((x + y) % 2 == 0)
+                   {
+                       opacity = .33f;
+                   }
+                   else
+                   {
+                       //otherwise it is one tenth opaque
+                       opacity = .1f;
+                   }
+                   //make the square the mouse is over red
+                   if (/*IsMouseInsideBoard() &&*/ IsMouseOnTile(x, y,_currentMousePosition))
+                   {
+                       colorToUse = Color.Red;
+                       opacity = .5f;
+                   }
+                   else
+                   {
+                       colorToUse = Color.White;
+                   }
+
+                   
+                   Casilla c1 = casillas[x, y];
                    spritebatch.Draw(c1.Img, c1.Posicion,null, Color.WhiteSmoke);
+                   //draw the white square at the given position, offset by the x- and y-offset, in the opacity desired
+                   spritebatch.Draw(_whiteSquare, squareToDrawPosition, colorToUse * opacity);
                
                }
            }
        
        }
+
+       // Checks to see whether a given coordinate is within the board
+       private bool IsMouseOnTile(int x, int y, Vector2 _currentMousePosition)
+       {
+           const int _tileSize = 80;
+           //do an integerdivision (whole-number) of the coordinates relative to the board offset with the tilesize in mind
+           return (int)(_currentMousePosition.X - posicion.X) / _tileSize == x && (int)(_currentMousePosition.Y - posicion.Y) / _tileSize == y;
+       }
+
+       //find out whether the mouse is inside the board
+   /*    bool IsMouseInsideBoard()
+       {
+           if (_currentMousePosition.X >= _boardPosition.X && _currentMousePosition.X <= _boardPosition.X + _board.GetLength(0) * _tileSize && _currentMousePosition.Y >= _boardPosition.Y && _currentMousePosition.Y <= _boardPosition.Y + _board.GetLength(1) * _tileSize)
+           {
+               return true;
+           }
+           else
+           { return false; }
+       }*/
 
     }
 }
