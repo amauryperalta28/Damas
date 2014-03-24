@@ -98,12 +98,12 @@ namespace Damas
                     {
                         if(c1.FichaContenida.Color == Colores.Red)
                         {
-                             Item item = new Red(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
+                             Ficha item = new Red(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
                             _dragDropController.Add(item);
                         }
                         else
                         {
-                            Item item = new Black(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
+                            Ficha item = new Black(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
                             _dragDropController.Add(item);
                         
                         }

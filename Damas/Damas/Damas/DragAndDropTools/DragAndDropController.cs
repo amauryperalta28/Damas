@@ -20,15 +20,15 @@ namespace DragAndDrop
         private MouseState _oldMouse, _currentMouse;
         private SpriteBatch _spriteBatch;
         private Vector2 _mouseDown;
-        private readonly List<T> _selectedItems;
-        private readonly List<T> _items;
+        private readonly List<Ficha> _selectedItems;
+        private readonly List<Ficha> _items;
         private bool _isDraggingRectangle;
         
-        public T ItemUnderTheMouseCursor { get; private set; }
+        public Ficha ItemUnderTheMouseCursor { get; private set; }
         public bool IsThereAnItemUnderTheMouseCursor { get; private set; }
 
-        public IEnumerable<T> Items { get { foreach (var item in _items) { yield return item; } } }
-        public IEnumerable<T> SelectedItems { get { foreach (var item in _selectedItems) { yield return item; } } }
+        public IEnumerable<Ficha> Items { get { foreach (var item in _items) { yield return item; } } }
+        public IEnumerable<Ficha> SelectedItems { get { foreach (var item in _selectedItems) { yield return item; } } }
 
         public int Count { get { return _items.Count; } }
         public int SelectedCount { get { return _selectedItems.Count; } }
@@ -66,7 +66,7 @@ namespace DragAndDrop
             get { return CurrentMousePosition - OldMousePosition; }
         }
 
-        public T ItemUnderMouseCursor()
+        public Ficha ItemUnderMouseCursor()
         {
             for (int i = _items.Count - 1; i >= 0; i--)
             {
@@ -75,7 +75,7 @@ namespace DragAndDrop
                     return _items[i];
                 }
             }
-            return default(T);
+            return default(Ficha);
         }
 
         #endregion
@@ -84,8 +84,8 @@ namespace DragAndDrop
 
         public DragAndDropController(Game game, SpriteBatch spriteBatch) : base(game)
         {
-            _selectedItems = new List<T>();
-            _items = new List<T>();
+            _selectedItems = new List<Ficha>();
+            _items = new List<Ficha>();
             _spriteBatch = spriteBatch;
             _selectionTexture = Game.Content.Load<Texture2D>(@"Images/white");
         }
@@ -115,8 +115,8 @@ namespace DragAndDrop
 
         #region public interaction methods
 
-        public void Add(T item) { _items.Add(item); }
-        public void Remove(T item) { _items.Remove(item); _selectedItems.Remove(item); }
+        public void Add(Ficha item) { _items.Add(item); }
+        public void Remove(Ficha item) { _items.Remove(item); _selectedItems.Remove(item); }
 
         public void DeselectAll()
         {
@@ -186,10 +186,11 @@ namespace DragAndDrop
             else
             {
                 if (MouseWasJustPressed) 
-                { //aqui es la baina
+                {
                     DeselectAll();
                     _mouseDown = CurrentMousePosition;
-                    _isDraggingRectangle = true;
+                    // Se quito la opcion de que se dibuje un rectangulo de seleccion
+                   // _isDraggingRectangle = true; 
                 }
             }
 
@@ -206,8 +207,8 @@ namespace DragAndDrop
                     _items.Where(item => selectionRectangle.Contains(item.Border)).ToList().ForEach(SelectItem);
                 }
                 else
-                {
-                    MoveSelectedItemsIfMouseButtonIsPressed();
+                {   //Se quito la opcion de poder arrastrar las fichas
+                    //MoveSelectedItemsIfMouseButtonIsPressed();
                 }
             }
         }
@@ -246,7 +247,7 @@ namespace DragAndDrop
 
         private void SaveCurrentMouseState() { _oldMouse = _currentMouse; }
 
-        private void SelectItem(T itemToSelect)
+        private void SelectItem(Ficha itemToSelect)
         {
             itemToSelect.IsSelected = true;
             if (!_selectedItems.Contains(itemToSelect))
@@ -255,9 +256,14 @@ namespace DragAndDrop
             }
         }
 
-        private void DeselectItem(T itemToDeselect)
+        private void DeselectItem(Ficha itemToDeselect)
         {
             itemToDeselect.IsSelected = false;
+            bool canNotMove = true;
+
+            Ficha fichaSeleccionada = ((Ficha)itemToDeselect);
+            Vector2 posFichaSeleccionada = itemToDeselect.Position;
+            
             Vector2 pos = CurrentMousePosition;
            
             // Se crea un tablero para saber la posicion de la casilla en la que se dio click
@@ -272,11 +278,19 @@ namespace DragAndDrop
                     if ((pos.X > c1.Posicion.X && pos.X <= c1.Posicion.X + 80) && (pos.Y > c1.Posicion.Y && pos.Y <= c1.Posicion.Y + 80))
                     {
                         pos = c1.Posicion;
+                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1)
+                        {
+                            pos = c1.Posicion;
+                            itemToDeselect.Position = pos;
+                            canNotMove = false;
+                        }
                     }
                 }
             
             }
-                itemToDeselect.Position = pos;
+               if(canNotMove)
+               itemToDeselect.Position = posFichaSeleccionada;
+            
             _selectedItems.Remove(itemToDeselect);
         } 
         #endregion

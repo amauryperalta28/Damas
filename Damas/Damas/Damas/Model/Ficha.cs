@@ -7,8 +7,10 @@ using Damas.Model;
 
 namespace DragAndDrop
 {
-   public abstract class Ficha: Item
+   public abstract class Ficha: Item, IDragAndDropItem
     {
+        
+
       private Colores color;       
       protected Vector2 posicion;       
       private Texture2D img;
@@ -25,11 +27,23 @@ namespace DragAndDrop
 
      // public Vector2[] getPosiblesMovidas() { return this.posiblesMovidas; }
       //public Vector2[] getPosiblesMovidasComer() { return this.posiblesMovidasComer; }
-      public abstract void canMove(Casilla casillaInicial, Casilla casillaFinal);
+      public abstract int canMove(Vector2 posicionInicial, Vector2 PosicionFinal);
       public void comerFicha(Casilla final) { }
       public abstract void getPosiblesMovidas();
       public abstract void getPosiblesMovidasComer();
+    
+     /*
+    * @brief Determina si la posicion esta en los limites permitidos
+    *
+    * @param[in] posicion	   Es la posicion a evaluar
+    *
+    * @return					1 si esta en los limites, 0 si no lo esta.
+    */
+    public int estaDentroDelTablero(double posX, double posY)
+    {
 
+        return (((posX >= 70) && (posX <= 650)) && ((posY >= 20) && (posY <= 580)) ? 1 : 0);
+    }
        
 
     }

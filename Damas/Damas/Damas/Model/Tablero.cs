@@ -18,15 +18,16 @@ namespace DragAndDrop.Model
        public Tablero(ContentManager content, SpriteBatch spriteBatch)
        {
            _whiteSquare = content.Load<Texture2D>("Images/white");
-           //Se inicializa la posicion del tablero
-           posicion = new Vector2(50, 20);
-           //Se le asignan las posiciones a cada casilla
 
+           //Se inicializa la posicion del tablero
+           posicion = new Vector2(70, 20);
+
+           //Se le asignan las posiciones a cada casilla
            for (int i = 0; i < casillas.GetLength(0); i++)
            {
                for (int j = 0; j < casillas.GetLength(1); j++)
                { 
-                     int posicionXPantalla = 50 + (i)*80;
+                     int posicionXPantalla = 70 + (i)*80;
                      int posicionYPantalla = 20 + (j)*80;
                      casillas[i,j]= new Casilla(){Posicion = new Vector2(posicionXPantalla,posicionYPantalla)};
                
