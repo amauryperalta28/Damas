@@ -25,7 +25,7 @@ namespace DragAndDrop
 
      // public Vector2[] getPosiblesMovidas() { return this.posiblesMovidas; }
       //public Vector2[] getPosiblesMovidasComer() { return this.posiblesMovidasComer; }
-      public void canMove(Casilla casillaInicial, Casilla casillaFinal) { }
+      public abstract void canMove(Casilla casillaInicial, Casilla casillaFinal);
       public void comerFicha(Casilla final) { }
       public abstract void getPosiblesMovidas();
       public abstract void getPosiblesMovidasComer();

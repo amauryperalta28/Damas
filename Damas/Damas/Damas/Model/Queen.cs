@@ -10,6 +10,7 @@ namespace DragAndDrop.Model
     {
        public override void getPosiblesMovidas(){}
        public override void getPosiblesMovidasComer(){}
+       public override void canMove(Casilla casillaInicial, Casilla casillaFinal) { }
 
     }
 }

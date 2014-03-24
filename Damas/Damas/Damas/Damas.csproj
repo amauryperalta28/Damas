@@ -112,7 +112,6 @@
     <Compile Include="DragAndDropTools\Item.cs" />
     <Compile Include="Model\Black.cs" />
     <Compile Include="Model\Casilla.cs" />
-    <Compile Include="Model\DragAndDropController.cs" />
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\Ficha.cs" />
     <Compile Include="Model\Queen.cs" />

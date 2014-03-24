@@ -16,6 +16,8 @@ namespace DragAndDrop.Model
        }
        public override void getPosiblesMovidasComer() { }
 
+       public override void canMove(Casilla casillaInicial, Casilla casillaFinal) { }
+
        public Red(SpriteBatch spriteBatch, Texture2D texture, Vector2 position)
         {
             posicion = position;

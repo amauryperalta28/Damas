@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using DragAndDrop.Model;
 
 namespace DragAndDrop
 {
@@ -257,10 +258,25 @@ namespace DragAndDrop
         private void DeselectItem(T itemToDeselect)
         {
             itemToDeselect.IsSelected = false;
-         /*   Vector2 pos = CurrentMousePosition;
-            pos.X = pos.X - 20;
-            pos.Y = pos.Y - 25;
-          itemToDeselect.Position = pos;*/
+            Vector2 pos = CurrentMousePosition;
+           
+            // Se crea un tablero para saber la posicion de la casilla en la que se dio click
+            Tablero t1 = new Tablero(Game.Content, _spriteBatch);
+
+            for (int y = 0; y < t1.casillas.GetLength(0); y++)
+            {
+                for (int x = 0; x < t1.casillas.GetLength(1); x++)
+                {
+                    Casilla c1 = t1.casillas[x, y];
+
+                    if ((pos.X > c1.Posicion.X && pos.X <= c1.Posicion.X + 80) && (pos.Y > c1.Posicion.Y && pos.Y <= c1.Posicion.Y + 80))
+                    {
+                        pos = c1.Posicion;
+                    }
+                }
+            
+            }
+                itemToDeselect.Position = pos;
             _selectedItems.Remove(itemToDeselect);
         } 
         #endregion
