@@ -177,6 +177,40 @@ namespace DragAndDrop
         
         }
 
+        /* @brief   Determina la cantidad de fichas rojas que hay en el tablero
+         * 
+         * @return      El numero de fichas rojas
+         */
+       public int cantFichasRojas()
+        {
+            int contadorFichas=0;
+            foreach(var item in _items)
+            {
+                if(item.Color == Colores.Red)
+                    contadorFichas++;           
+            }
+
+            return contadorFichas;
+        
+        }
+
+       /* @brief   Determina la cantidad de fichas negras que hay en el tablero
+        * 
+        * @return      El numero de fichas negras
+        */
+       public int cantFichasNegras()
+       {
+           int contadorFichas = 0;
+           foreach (var item in _items)
+           {
+               if (item.Color == Colores.Black)
+                   contadorFichas++;
+           }
+
+           return contadorFichas;
+
+       }
+
         /* @brief  Determina si el jugador esta obligado a comer una ficha
          * 
          * @param[in]  ficha        ficha a la que se le toma el color
@@ -358,8 +392,9 @@ namespace DragAndDrop
 
             Ficha fichaSeleccionada = ((Ficha)itemToDeselect);
 
-            
             Vector2 posFichaSeleccionada = itemToDeselect.Position;
+
+            
             
             Vector2 pos = CurrentMousePosition;
            

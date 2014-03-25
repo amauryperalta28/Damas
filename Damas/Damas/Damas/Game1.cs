@@ -25,6 +25,10 @@ namespace Damas
 
         enum GameState { Start, InGame, GameOver };
         GameState currentGameState = GameState.Start;
+
+        Colores fichasNegras = Colores.Black;
+        Colores fichasRojas = Colores.Red;
+
         private DragAndDropController<Item> _dragDropController;
         Tablero t1;
        
@@ -113,6 +117,97 @@ namespace Damas
             }
         }
 
+        // Determina si algun jugador se quedo sin fichas
+        private bool alguienSeQuedoSinFichas()
+        {
+            // Determina la cantidad de fichas rojas y negras y se guardan
+            int cantFichasRojas = _dragDropController.cantFichasRojas();
+            int cantFichasNegras = _dragDropController.cantFichasNegras();
+
+            if (cantFichasNegras == 0 || cantFichasRojas == 0)
+            {
+                
+                return true;
+
+            }
+            else
+            {
+                return false;
+            
+            }
+        
+        }
+
+        // Determina si algun jugador no puede moverse
+        // @param[in]   color       Este el color del jugador a evaluar
+        // @return      true si no se puede mover, false si puede mover
+        private bool NoPuedenMoverse(Colores color)
+        {
+            int cantFichaEnTablero =  0;
+            int cantFichasNoPuedenMoverse = 0;
+            int cantMovimientosNoSePuedenHacer = 0;
+
+            //Guarda la cantidad de fichas en el tablero dependiendo del color
+            if (color == Colores.Black)
+                cantFichaEnTablero = _dragDropController.cantFichasNegras();
+            else
+                cantFichaEnTablero = _dragDropController.cantFichasRojas();
+
+            //Recorro las fichas que estan en el tablero del color especificado
+            foreach(var ficha in _dragDropController.Items)
+            {
+                if (ficha.Color == color)
+                {
+                    //Se verifica si la ficha que se esta evaluando se puede mover en la casilla
+                    Vector2 posicionAEvaluar = new Vector2(ficha.Position.X + 80, ficha.Position.Y - 80);
+
+                    if (ficha.canMove(ficha.Position,posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                        return false;
+                    else
+                        cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
+
+                    posicionAEvaluar = new Vector2(ficha.Position.X - 80, ficha.Position.Y - 80);
+                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                        return false;
+                    else
+                        cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
+
+                    posicionAEvaluar = new Vector2(ficha.Position.X + 80, ficha.Position.Y + 80);
+                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                        return false;
+                    else
+                        cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
+
+                    posicionAEvaluar = new Vector2(ficha.Position.X - 80, ficha.Position.Y + 80);
+                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                        return false;
+                    else
+                        cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
+
+                    //Se verifica la cantidad de movimientos que no se pudieron hacer
+                    if (cantMovimientosNoSePuedenHacer >= 1)
+                        cantFichasNoPuedenMoverse++; //Se incrementa el numero de fichas que no pueden moverse
+                
+                }
+
+
+            
+            }
+                //Se verifica si la cantidad de fichas que no pueden moverse es igual a la cantidad de fichas de ese color en el tablero 
+                return cantFichasNoPuedenMoverse == cantFichaEnTablero? true:false;
+        
+        }
+
+        private bool endGame()
+        {
+
+            if (alguienSeQuedoSinFichas() && (NoPuedenMoverse(fichasNegras) || (NoPuedenMoverse(fichasRojas))))
+                return true;
+            else
+                return false;
+        
+        }
+
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
@@ -139,9 +234,9 @@ namespace Damas
             //remember the mouseposition for use in this Update and subsequent Draw
             _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
 
+           
             //Verifica si llego una ficha al lado contrario para convertirla en Reina
             _dragDropController.coronarAReina();
-
 
             
             // TODO: Add your update logic here

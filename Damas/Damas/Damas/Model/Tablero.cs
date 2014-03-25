@@ -135,26 +135,13 @@ namespace DragAndDrop.Model
        
        }
 
-       public void moverFichas(Casilla casillaInicial, Casilla casillaFinal)
-       {
-
-
-       }
-
-       public void coronarFichas() { }
-
+       
+       
        public Casilla[,] getCasillas()
         {
             return casillas;
         }
-       public int cantFichasRojas()
-       {
-           return 0;
-       }
-       public int cantFichasNegras()
-       {
-           return 0;
-       }
+            
 
        public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition)
        {
@@ -211,16 +198,7 @@ namespace DragAndDrop.Model
            return (int)(_currentMousePosition.X - posicion.X) / _tileSize == x && (int)(_currentMousePosition.Y - posicion.Y) / _tileSize == y;
        }
 
-       //find out whether the mouse is inside the board
-   /*    bool IsMouseInsideBoard()
-       {
-           if (_currentMousePosition.X >= _boardPosition.X && _currentMousePosition.X <= _boardPosition.X + _board.GetLength(0) * _tileSize && _currentMousePosition.Y >= _boardPosition.Y && _currentMousePosition.Y <= _boardPosition.Y + _board.GetLength(1) * _tileSize)
-           {
-               return true;
-           }
-           else
-           { return false; }
-       }*/
+   
 
     }
 }
