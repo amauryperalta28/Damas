@@ -139,6 +139,8 @@ namespace Damas
             //remember the mouseposition for use in this Update and subsequent Draw
             _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
 
+            
+            
             // TODO: Add your update logic here
 
             base.Update(gameTime);

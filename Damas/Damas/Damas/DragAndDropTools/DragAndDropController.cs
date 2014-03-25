@@ -34,6 +34,7 @@ namespace DragAndDrop
         public int SelectedCount { get { return _selectedItems.Count; } }
 
         private Texture2D _selectionTexture;
+        
 
         private bool MouseWasJustPressed
         {
@@ -88,6 +89,9 @@ namespace DragAndDrop
             _items = new List<Ficha>();
             _spriteBatch = spriteBatch;
             _selectionTexture = Game.Content.Load<Texture2D>(@"Images/white");
+            
+            
+            
         }
 
         public override void Update(GameTime gameTime)
@@ -98,7 +102,29 @@ namespace DragAndDrop
             HandleKeyboardInput();
             SaveCurrentMouseState();
         }
+        
+        /* @brief Determina si en una posicion especificada se encuentra una ficha
+         * 
+         * @param[in]  posicion         Esta es la posicion que se va a evaluar
+         * 
+         * @return     true si no hay una casilla, false de lo contrario 
+         * 
+         */
+        public bool noHayUnaFichaEnLaCasilla(Vector2 posicion)
+        {
+            //Verifica Si hay un ficha que tenga la misma posicion a donde me quiero mover
+            
+            foreach (var item in _items) 
+            {
+                if (posicion.X == item.Position.X && posicion.Y == item.Position.Y)
+                {
+                    return false;
+                }
+                
+            }
 
+            return true;
+        }
         public override void Draw(GameTime gameTime)
         {
             if (_isDraggingRectangle)
@@ -275,10 +301,12 @@ namespace DragAndDrop
                 {
                     Casilla c1 = t1.casillas[x, y];
 
+                    /*  Si el puntero esta dentro de una casilla, ponle la posicion de esa casilla
+                     *  al objeto seleccionado.  */
                     if ((pos.X > c1.Posicion.X && pos.X <= c1.Posicion.X + 80) && (pos.Y > c1.Posicion.Y && pos.Y <= c1.Posicion.Y + 80))
                     {
-                        pos = c1.Posicion;
-                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1)
+                       
+                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1 && noHayUnaFichaEnLaCasilla(c1.Posicion)== true)
                         {
                             pos = c1.Posicion;
                             itemToDeselect.Position = pos;
