@@ -111,11 +111,13 @@
     <Compile Include="DragAndDropTools\IDragAndDropItem.cs" />
     <Compile Include="DragAndDropTools\Item.cs" />
     <Compile Include="Model\Black.cs" />
+    <Compile Include="Model\BlackQueen.cs" />
     <Compile Include="Model\Casilla.cs" />
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\Ficha.cs" />
     <Compile Include="Model\Queen.cs" />
     <Compile Include="Model\Red.cs" />
+    <Compile Include="Model\RedQueen.cs" />
     <Compile Include="Model\Tablero.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />

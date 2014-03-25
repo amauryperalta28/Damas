@@ -8,7 +8,7 @@ using Damas.Model;
 
 namespace DragAndDrop.Model
 {
-   public class Queen:Ficha
+   public abstract class Queen:Ficha
     {
        public override void getPosiblesMovidas(){}
        public override void getPosiblesMovidasComer(){}
@@ -65,13 +65,9 @@ namespace DragAndDrop.Model
 
        }
 
-       public Queen(SpriteBatch spriteBatch, Texture2D texture, Vector2 position)
-        {
-            base._spriteBatch = spriteBatch;
-            base.Texture = texture;
-            base.Position = position;
-            posicion = position;
-           // base.Color = Colores.Black;
+       public Queen()
+        {            
+            
         }
     }
 }

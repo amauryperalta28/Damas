@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 using DragAndDrop.Model;
+using Damas.Model;
 
 namespace DragAndDrop
 {
@@ -20,8 +21,8 @@ namespace DragAndDrop
         private MouseState _oldMouse, _currentMouse;
         private SpriteBatch _spriteBatch;
         private Vector2 _mouseDown;
-        private readonly List<Ficha> _selectedItems;
-        private readonly List<Ficha> _items;
+        private  List<Ficha> _selectedItems;
+        private  List<Ficha> _items;
         private bool _isDraggingRectangle;
         
         public Ficha ItemUnderTheMouseCursor { get; private set; }
@@ -34,6 +35,7 @@ namespace DragAndDrop
         public int SelectedCount { get { return _selectedItems.Count; } }
 
         private Texture2D _selectionTexture;
+        private Tablero _copiaTablero;
         
 
         private bool MouseWasJustPressed
@@ -89,6 +91,7 @@ namespace DragAndDrop
             _items = new List<Ficha>();
             _spriteBatch = spriteBatch;
             _selectionTexture = Game.Content.Load<Texture2D>(@"Images/white");
+            _copiaTablero = new Tablero(Game.Content);
             
             
             
@@ -102,6 +105,7 @@ namespace DragAndDrop
             HandleKeyboardInput();
             SaveCurrentMouseState();
         }
+             
         
         /* @brief Determina si en una posicion especificada se encuentra una ficha
          * 
@@ -125,6 +129,67 @@ namespace DragAndDrop
 
             return true;
         }
+
+        /* @brief Convierte en Reina la ficha que llega a la primera fila del oponente
+         * 
+         * @return      no retorna nada
+         */
+        public void coronarAReina()
+        {
+            //Se Verifica el lado del oponente negro
+            for(int i =  _items.Count - 1; i >= 0; i--) 
+            {
+                for (int x = 70; x <= 630; x = x + 80)
+                {
+                    Ficha item = _items.ElementAt(i);
+                    Vector2 posAEvaluar = new Vector2(x, 20);
+                    if ( item.Position.Equals(posAEvaluar) && (item is Red))
+                    {
+                        Remove(item);
+                        RedQueen reina = new RedQueen(_spriteBatch, Game.Content, posAEvaluar);
+                         Add(reina);
+                    }
+                    
+                }                   
+
+            }
+
+            //Se Verifica el lado del oponente Rojo
+            for (int j = _items.Count - 1; j >= 0; j--)
+            {
+                for (int x1 = 70; x1 <= 630; x1 = x1 + 80)
+                {
+                    Ficha item = _items.ElementAt(j);
+                    Vector2 posAEvaluar = new Vector2(x1, 580);
+                    if (item.Position.Equals(posAEvaluar) &&  (item is Black))
+                    {
+                        Remove(item);
+                        BlackQueen reina = new BlackQueen(_spriteBatch, Game.Content, posAEvaluar);
+                        Add(reina);
+                    }
+
+                }
+
+            }
+            
+            
+            
+        
+        }
+
+        /* @brief  Determina si el jugador esta obligado a comer una ficha
+         * 
+         * @param[in]  ficha        ficha a la que se le toma el color
+         * 
+         * @return                  true si hay que comer, false de lo contrario
+         * 
+         */
+        public bool hayQueComer(Colores color)
+        { 
+
+            return true; 
+        }
+        
         public override void Draw(GameTime gameTime)
         {
             if (_isDraggingRectangle)
@@ -280,6 +345,8 @@ namespace DragAndDrop
             {
                 _selectedItems.Add(itemToSelect);
             }
+
+            
         }
 
         private void DeselectItem(Ficha itemToDeselect)
@@ -287,7 +354,11 @@ namespace DragAndDrop
             itemToDeselect.IsSelected = false;
             bool canNotMove = true;
 
+            
+
             Ficha fichaSeleccionada = ((Ficha)itemToDeselect);
+
+            
             Vector2 posFichaSeleccionada = itemToDeselect.Position;
             
             Vector2 pos = CurrentMousePosition;
@@ -306,7 +377,7 @@ namespace DragAndDrop
                     if ((pos.X > c1.Posicion.X && pos.X <= c1.Posicion.X + 80) && (pos.Y > c1.Posicion.Y && pos.Y <= c1.Posicion.Y + 80))
                     {
                        
-                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1 && noHayUnaFichaEnLaCasilla(c1.Posicion)== true)
+                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1 && noHayUnaFichaEnLaCasilla(c1.Posicion))
                         {
                             pos = c1.Posicion;
                             itemToDeselect.Position = pos;

@@ -139,7 +139,10 @@ namespace Damas
             //remember the mouseposition for use in this Update and subsequent Draw
             _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
 
-            
+            //Verifica si llego una ficha al lado contrario para convertirla en Reina
+            _dragDropController.coronarAReina();
+
+
             
             // TODO: Add your update logic here
 
