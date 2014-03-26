@@ -29,7 +29,7 @@ namespace DragAndDrop.Model
 
            }
 
-           if (estaDentroDelTablero(posicionInicial.X - 80, posicionInicial.Y - 80) == 1)
+           if (estaDentroDelTablero(posicionInicial.X - 80, posicionInicial.Y + 80) == 1)
            {
                posicionesValidas[IndexValidmove].X = posicionInicial.X - 80;
                posicionesValidas[IndexValidmove].Y = posicionInicial.Y + 80;

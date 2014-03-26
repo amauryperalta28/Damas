@@ -154,32 +154,32 @@ namespace Damas
                 cantFichaEnTablero = _dragDropController.cantFichasRojas();
 
             //Recorro las fichas que estan en el tablero del color especificado
-            foreach(var ficha in _dragDropController.Items)
+            foreach(var fichaEvaluada in _dragDropController.Items)
             {
-                if (ficha.Color == color)
+                if (fichaEvaluada.Color == color)
                 {
                     //Se verifica si la ficha que se esta evaluando se puede mover en la casilla
-                    Vector2 posicionAEvaluar = new Vector2(ficha.Position.X + 80, ficha.Position.Y - 80);
+                    Vector2 posicionAEvaluar = new Vector2(fichaEvaluada.Position.X + 80, fichaEvaluada.Position.Y - 80);
 
-                    if (ficha.canMove(ficha.Position,posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                    if (fichaEvaluada.canMove(fichaEvaluada.Position,posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
-                    posicionAEvaluar = new Vector2(ficha.Position.X - 80, ficha.Position.Y - 80);
-                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                    posicionAEvaluar = new Vector2(fichaEvaluada.Position.X - 80, fichaEvaluada.Position.Y - 80);
+                    if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
-                    posicionAEvaluar = new Vector2(ficha.Position.X + 80, ficha.Position.Y + 80);
-                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                    posicionAEvaluar = new Vector2(fichaEvaluada.Position.X + 80, fichaEvaluada.Position.Y + 80);
+                    if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
-                    posicionAEvaluar = new Vector2(ficha.Position.X - 80, ficha.Position.Y + 80);
-                    if (ficha.canMove(ficha.Position, posicionAEvaluar) == 1 && _dragDropController.noHayUnaFichaEnLaCasilla(posicionAEvaluar) == true)
+                    posicionAEvaluar = new Vector2(fichaEvaluada.Position.X - 80, fichaEvaluada.Position.Y + 80);
+                    if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
@@ -234,7 +234,7 @@ namespace Damas
             //remember the mouseposition for use in this Update and subsequent Draw
             _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
 
-           
+            
             //Verifica si llego una ficha al lado contrario para convertirla en Reina
             _dragDropController.coronarAReina();
 
