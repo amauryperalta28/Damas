@@ -49,20 +49,29 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Images\ficha2.png">
-      <Name>ficha2</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Images\black.png">
       <Name>black</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\reinared.png">
+      <Name>reinared</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="Images\ficha1.png">
       <Name>ficha1</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\ficha2.png">
+      <Name>ficha2</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -73,8 +82,10 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="Images\reinared.png">
-      <Name>reinared</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Images\fondo.jpg">
+      <Name>fondo</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

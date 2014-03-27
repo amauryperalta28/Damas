@@ -21,7 +21,7 @@ namespace Damas
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Texture2D texture;
+        Texture2D fondoDelJuego;
 
         enum GameState { Start, InGame, GameOver };
         GameState currentGameState = GameState.Start;
@@ -30,7 +30,7 @@ namespace Damas
         Colores fichasRojas = Colores.Red;
 
         private DragAndDropController<Item> _dragDropController;
-        Tablero t1;
+        Tablero tablero;
        
         //Variables para almacenar posicion actual del puntero
         MouseState _currentMouse;
@@ -81,9 +81,9 @@ namespace Damas
             _dragDropController = new DragAndDropController<Item>(this, spriteBatch);
             Components.Add(_dragDropController);
             
-            t1 = new Tablero(Content, spriteBatch);
+            tablero = new Tablero(Content, spriteBatch);
             SetupDraggableItems();
-            texture = Content.Load<Texture2D>(@"Images/ficha1");
+            fondoDelJuego = Content.Load<Texture2D>(@"Images/fondo");
 
             // TODO: use this.Content to load your game content here
         }
@@ -96,7 +96,7 @@ namespace Damas
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Casilla c1 = t1.casillas[j, i];
+                    Casilla c1 = tablero.casillas[j, i];
                     // Si hay una ficha en la casilla insertala en el dragAndDropController
                     if (c1.FichaContenida != null)
                     {
@@ -260,7 +260,8 @@ namespace Damas
 
             spriteBatch.Begin();
            // spriteBatch.Draw(texture, new Vector2(50,20), Color.White);
-           t1.draw(spriteBatch, _currentMousePosition);
+            spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
+           tablero.draw(spriteBatch, _currentMousePosition);
           foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
             spriteBatch.End();
 
