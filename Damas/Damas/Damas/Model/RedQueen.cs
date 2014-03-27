@@ -14,11 +14,13 @@ namespace Damas.Model
         public RedQueen(SpriteBatch spriteBatch, ContentManager content, Vector2 position)
         {
 
-            Color = Colores.Black;
+            Color = Colores.Red;
             base._spriteBatch = spriteBatch;
             base.Texture = content.Load<Texture2D>("Images/reinared"); ;
             base.Position = position;
             posicion = position;
+
+            
             
         }
     }

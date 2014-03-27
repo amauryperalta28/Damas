@@ -16,7 +16,7 @@ namespace DragAndDrop
       private Texture2D img;
 
       private Vector2[] posiblesMovidas = new Vector2[6];
-      private Vector2[] posiblesMovidasComer = new Vector2[6];
+      private List<Vector2> posiblesMovidasComer = new List<Vector2>();
       
 
            
@@ -29,6 +29,32 @@ namespace DragAndDrop
       //public Vector2[] getPosiblesMovidasComer() { return this.posiblesMovidasComer; }
       public abstract int canMove(Vector2 posicionInicial, Vector2 PosicionFinal);
       public void comerFicha(Casilla final) { }
+
+      public bool esJugadaParaComerFicha(Vector2 jugadaAEvaluar)
+      {
+          // Se recorre la lista de posibles movidas para comer
+          foreach (var jugada in posiblesMovidasComer)
+          {
+              //Se verifica si se encuentra la jugada a evaluar dentro 
+              //de la lista de posibles jugadas para comer
+              if (jugadaAEvaluar.Equals(jugada))
+              {
+                  return true;
+              }
+              
+          }
+         return false;
+      
+      }
+      public void addJugadaParaComerFicha(Vector2 posicion)
+      {
+          posiblesMovidasComer.Add(posicion);
+      }
+      public void removeJugadasParaComerFicha()
+      {
+          posiblesMovidasComer.Clear();
+      
+      }
       public abstract void getPosiblesMovidas();
       public abstract void getPosiblesMovidasComer();
     

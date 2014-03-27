@@ -102,12 +102,12 @@ namespace Damas
                     {
                         if(c1.FichaContenida.Color == Colores.Red)
                         {
-                             Ficha item = new Red(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
+                             Ficha item = new Red(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);                            
                             _dragDropController.Add(item);
                         }
                         else
                         {
-                            Ficha item = new Black(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);
+                            Ficha item = new Black(spriteBatch, c1.FichaContenida.Texture, c1.Posicion);                            
                             _dragDropController.Add(item);
                         
                         }
@@ -201,7 +201,7 @@ namespace Damas
         private bool endGame()
         {
 
-            if (alguienSeQuedoSinFichas() && (NoPuedenMoverse(fichasNegras) || (NoPuedenMoverse(fichasRojas))))
+            if (alguienSeQuedoSinFichas() || (NoPuedenMoverse(fichasNegras) || (NoPuedenMoverse(fichasRojas))))
                 return true;
             else
                 return false;
@@ -237,6 +237,12 @@ namespace Damas
             
             //Verifica si llego una ficha al lado contrario para convertirla en Reina
             _dragDropController.coronarAReina();
+
+            if (endGame())
+            {
+                this.Exit();
+            
+            }
 
             
             // TODO: Add your update logic here

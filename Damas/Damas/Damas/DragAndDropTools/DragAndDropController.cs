@@ -233,15 +233,18 @@ namespace DragAndDrop
        }
 
         /* @brief  Determina si una ficha puede comer otra ficha
+         *         Si puede realizar una movida para comer otra ficha, esta se agrega en la lista
+         *         de posiciones en la que puede comer la ficha.
+         * 
          * 
          * @param[in]  ficha        ficha a evaluar
          * 
-         * @return                  true si hay que comer, false de lo contrario
+         * @return                  true si puede comer, false de lo contrario
          * 
          */
         public bool fichaPuedeComer(Ficha fichaAEvaluar)
-        { 
-            
+        {
+            int posEnLasQuePuedeComer = 0;
             Vector2 posicionAEvaluar1 = new Vector2(fichaAEvaluar.Position.X + 80,fichaAEvaluar.Position.Y + 80 );            
             Vector2 posicionAEvaluar2 = new Vector2(fichaAEvaluar.Position.X - 80,fichaAEvaluar.Position.Y + 80 );
             Vector2 posicionAEvaluar3 = new Vector2(fichaAEvaluar.Position.X - 80,fichaAEvaluar.Position.Y - 80 );
@@ -257,27 +260,54 @@ namespace DragAndDrop
             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar1)==1 && estatusCasilla(posicionAEvaluar1).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar1).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer1).NohayUnaFicha == true)
             {
-                return true;
+                
+                // Si se puede comer, inserta la posicion en la lista de posiciones en las que puede comer la ficha
+                if (fichaAEvaluar.estaDentroDelTablero(posDespuesDeComer1.X, posDespuesDeComer1.Y) == 1)
+                {
+                    fichaAEvaluar.addJugadaParaComerFicha(posDespuesDeComer1);
+                    posEnLasQuePuedeComer++;
+                }
+                    
             }
-            else if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar2)==1 && estatusCasilla(posicionAEvaluar2).NohayUnaFicha == false &&
+             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar2)==1 && estatusCasilla(posicionAEvaluar2).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar2).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer2).NohayUnaFicha == true)
-            { 
-                return true; 
+            {
+                
+                // Si se puede comer, inserta la posicion en la lista de posiciones en las que puede comer la ficha
+                if (fichaAEvaluar.estaDentroDelTablero(posDespuesDeComer2.X, posDespuesDeComer2.Y) == 1)
+                {
+                    fichaAEvaluar.addJugadaParaComerFicha(posDespuesDeComer2);
+                    posEnLasQuePuedeComer++;
+                }
+                       
+ 
             }
-            else if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar3)==1 && estatusCasilla(posicionAEvaluar3).NohayUnaFicha == false &&
+             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar3)==1 && estatusCasilla(posicionAEvaluar3).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar3).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer3).NohayUnaFicha == true)
             {
-                return true; 
+                
+                // Si se puede comer, inserta la posicion en la lista de posiciones en las que puede comer la ficha
+                if (fichaAEvaluar.estaDentroDelTablero(posDespuesDeComer3.X, posDespuesDeComer3.Y) == 1)
+                {
+                    fichaAEvaluar.addJugadaParaComerFicha(posDespuesDeComer3);
+                    posEnLasQuePuedeComer++;
+                }
+                    
             }
-            else if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar4)==1 && estatusCasilla(posicionAEvaluar4).NohayUnaFicha == false &&
+             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar4)==1 && estatusCasilla(posicionAEvaluar4).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar4).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer4).NohayUnaFicha == true)
             {
-                return true;
+                
+                // Si se puede comer, inserta la posicion en la lista de posiciones en las que puede comer la ficha
+                if (fichaAEvaluar.estaDentroDelTablero(posDespuesDeComer4.X, posDespuesDeComer4.Y) == 1)
+                {
+                    fichaAEvaluar.addJugadaParaComerFicha(posDespuesDeComer4);
+                    posEnLasQuePuedeComer++;
+                }
+                    
             }
-            else
-            { 
-                return false; 
-            }
+
+             return posEnLasQuePuedeComer > 0 ? true : false;
         }
 
         /* @brief  Determina si un jugador debe comer otra ficha
@@ -302,6 +332,59 @@ namespace DragAndDrop
             }
             return false;
         
+        }
+
+        /* @brief Determina la posicion de la ficha que debe eliminarse y la elimina
+         * 
+         * @param[in] posInicial            Esta es la posicion inicial de la ficha
+         * @param[in] posFinal              Esta es la posicion final de la ficha
+         * 
+         * @return    no retorna nada
+         * 
+         */
+        public void identificarYEliminarFicha(Vector2 posInicial, Vector2 posFinal)
+        {
+            Vector2 posFichaAEliminar= new Vector2(0,0);
+
+            if (posFinal.X == posInicial.X + 160 && posFinal.Y == posInicial.Y - 160)
+                    posFichaAEliminar = new Vector2(posInicial.X + 80, posInicial.Y - 80);
+
+            else if (posFinal.X == posInicial.X - 160 && posFinal.Y == posInicial.Y - 160)
+                    posFichaAEliminar = new Vector2(posInicial.X - 80, posInicial.Y - 80);
+
+            else if (posFinal.X == posInicial.X + 160 && posFinal.Y == posInicial.Y + 160)
+                    posFichaAEliminar = new Vector2(posInicial.X + 80, posInicial.Y + 80);
+
+            else if (posFinal.X == posInicial.X - 160 && posFinal.Y == posInicial.Y + 160)
+                    posFichaAEliminar = new Vector2(posInicial.X - 80, posInicial.Y + 80);
+
+            //Recorro las fichas del tablero 
+           /* foreach (var fichaEvaluada in _items)
+            {
+                // Verifico si la posicion de la ficha a eliminar es igual a la ficha que estoy evaluando
+                if (fichaEvaluada.Position.Equals(posFichaAEliminar))
+                {
+                    Remove(fichaEvaluada);                
+                }
+ 
+            }
+            */
+            for (int i = _items.Count - 1; i >= 0; i--)
+            {
+                for (int x = 70; x <= 630; x = x + 80)
+                {
+                    Ficha item = _items.ElementAt(i);
+                   
+                    if (item.Position.Equals(posFichaAEliminar) )
+                    {
+                        Remove(item);
+                        return;
+                                             
+                    }
+
+                }
+
+            }
         }
 
         #endregion
@@ -457,17 +540,13 @@ namespace DragAndDrop
         private void DeselectItem(Ficha itemToDeselect)
         {
             itemToDeselect.IsSelected = false;
-            bool canNotMove = true;
-
-            
+            bool canNotMove = true;                      
 
             Ficha fichaSeleccionada = ((Ficha)itemToDeselect);
 
             Vector2 posFichaSeleccionada = itemToDeselect.Position;
-
             
-            
-            Vector2 pos = CurrentMousePosition;
+            Vector2 posDestino = CurrentMousePosition;
            
             // Se crea un tablero para saber la posicion de la casilla en la que se dio click
             Tablero t1 = new Tablero(Game.Content, _spriteBatch);
@@ -476,17 +555,27 @@ namespace DragAndDrop
             {
                 for (int x = 0; x < t1.casillas.GetLength(1); x++)
                 {
-                    Casilla c1 = t1.casillas[x, y];
+                    Casilla casillaEvaluada = t1.casillas[x, y];
 
                     /*  Si el puntero esta dentro de una casilla, ponle la posicion de esa casilla
                      *  al objeto seleccionado.  */
-                    if ((pos.X > c1.Posicion.X && pos.X <= c1.Posicion.X + 80) && (pos.Y > c1.Posicion.Y && pos.Y <= c1.Posicion.Y + 80))
+                    if ((posDestino.X > casillaEvaluada.Posicion.X && posDestino.X <= casillaEvaluada.Posicion.X + 80) && (posDestino.Y > casillaEvaluada.Posicion.Y && posDestino.Y <= casillaEvaluada.Posicion.Y + 80))
                     {
-                       
-                        if (fichaSeleccionada.canMove(posFichaSeleccionada, c1.Posicion) == 1 && estatusCasilla(c1.Posicion).NohayUnaFicha)
+                        
+                        
+                       if (jugadorDebeComer(fichaSeleccionada.Color) && fichaPuedeComer(fichaSeleccionada) && fichaSeleccionada.esJugadaParaComerFicha(casillaEvaluada.Posicion))
+                         {
+                             posDestino = casillaEvaluada.Posicion;
+                             identificarYEliminarFicha(fichaSeleccionada.Position, casillaEvaluada.Posicion);
+                             itemToDeselect.Position = posDestino;
+                             canNotMove = false;
+
+                        
+                         }
+                        else if (fichaSeleccionada.canMove(posFichaSeleccionada, casillaEvaluada.Posicion) == 1 && estatusCasilla(casillaEvaluada.Posicion).NohayUnaFicha && !jugadorDebeComer(fichaSeleccionada.Color))
                         {
-                            pos = c1.Posicion;
-                            itemToDeselect.Position = pos;
+                            posDestino = casillaEvaluada.Posicion;
+                            itemToDeselect.Position = posDestino;
                             canNotMove = false;
                         }
                     }
@@ -497,6 +586,7 @@ namespace DragAndDrop
                itemToDeselect.Position = posFichaSeleccionada;
             
             _selectedItems.Remove(itemToDeselect);
+            fichaSeleccionada.removeJugadasParaComerFicha();
         } 
         #endregion
 
