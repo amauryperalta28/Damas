@@ -10,12 +10,7 @@ namespace DragAndDrop.Model
 {
    public class Red:Ficha
     {
-       public override void getPosiblesMovidas() {
-
-                     
-       }
-       public override void getPosiblesMovidasComer() { }
-
+       
        public override int canMove(Vector2 posicionInicial, Vector2 PosicionFinal)
        {
            //Variables en la que se insertan las posiciones validas para moverse
@@ -59,8 +54,8 @@ namespace DragAndDrop.Model
             
             base._spriteBatch = spriteBatch;
             base.Texture = texture;
-            base.Position = position;       
-            
+            base.Position = position;
+                      
             
             base.Color = Colores.Red;
         }

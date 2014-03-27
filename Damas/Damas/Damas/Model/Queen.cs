@@ -10,8 +10,7 @@ namespace DragAndDrop.Model
 {
    public abstract class Queen:Ficha
     {
-       public override void getPosiblesMovidas(){}
-       public override void getPosiblesMovidasComer(){}
+       
        public override int canMove(Vector2 posicionInicial, Vector2 PosicionFinal)
        {
            //Variables en la que se insertan las posiciones validas para moverse

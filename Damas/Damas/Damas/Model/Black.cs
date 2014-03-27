@@ -10,11 +10,7 @@ namespace DragAndDrop.Model
 {
    public class Black: Ficha
     {
-       public override void getPosiblesMovidas(){}
-
-       public override void getPosiblesMovidasComer(){}
-
-       public override int canMove(Vector2 posicionInicial, Vector2 PosicionFinal)
+        public override int canMove(Vector2 posicionInicial, Vector2 PosicionFinal)
        {
            //Variables en la que se insertan las posiciones validas para moverse
            Vector2[] posicionesValidas = new Vector2[4];
@@ -58,6 +54,8 @@ namespace DragAndDrop.Model
             base.Position = position;
             posicion = position;
             base.Color = Colores.Black;
+            
+
         }
 
        

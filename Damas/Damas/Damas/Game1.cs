@@ -200,8 +200,11 @@ namespace Damas
 
         private bool endGame()
         {
-
-            if (alguienSeQuedoSinFichas() || (NoPuedenMoverse(fichasNegras) || (NoPuedenMoverse(fichasRojas))))
+            bool NegrasnoPuedenComer = !_dragDropController.jugadorDebeComer(fichasNegras);
+            bool rojasNoPuedenComer = !_dragDropController.jugadorDebeComer(fichasRojas);
+            // Se verifica si alguien se quedo sin fichas, si alguien no puede moverse o si alguien no puede comer
+            if (alguienSeQuedoSinFichas() || ((NoPuedenMoverse(fichasNegras) && NegrasnoPuedenComer) ||
+                (NoPuedenMoverse(fichasRojas) && rojasNoPuedenComer)) )
                 return true;
             else
                 return false;

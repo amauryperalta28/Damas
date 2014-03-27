@@ -528,11 +528,24 @@ namespace DragAndDrop
 
         private void SelectItem(Ficha itemToSelect)
         {
-            itemToSelect.IsSelected = true;
-            if (!_selectedItems.Contains(itemToSelect))
-            {
-                _selectedItems.Add(itemToSelect);
-            }
+            
+           /* if (!_selectedItems.Contains(itemToSelect))
+            {*/
+                //Se verifica si es el turno del jugador rojo para jugar
+                if (itemToSelect.Color.Equals(Colores.Red) && manejadorDeTurnos.turnoJugadorRojo == true)
+                {
+                    itemToSelect.IsSelected = true;
+                    _selectedItems.Add(itemToSelect);
+                    
+                }
+                //Se verifica si es el turno del jugador negro para jugar
+                else if (itemToSelect.Color.Equals(Colores.Black) && manejadorDeTurnos.turnoJugadorNegro == true)
+                {
+                    itemToSelect.IsSelected = true;
+                    _selectedItems.Add(itemToSelect);
+                    
+                }
+           // }
 
             
         }
@@ -570,6 +583,27 @@ namespace DragAndDrop
                              itemToDeselect.Position = posDestino;
                              canNotMove = false;
 
+                           // Se verifica el color para ceder el turno al otro jugador
+                             if (fichaSeleccionada.Color == Colores.Red)
+                             {
+                                 // Se verifica si la ficha puede seguir comiendo
+                                 if (fichaPuedeComer(itemToDeselect) == false)
+                                 {
+                                     manejadorDeTurnos.turnoJugadorRojo = false;
+                                     manejadorDeTurnos.turnoJugadorNegro = true;
+                                 }
+                             }
+                             else
+                             {
+                                 // Se verifica si la ficha puede seguir comiendo
+                                 if (fichaPuedeComer(itemToDeselect) == false)
+                                 {
+                                     manejadorDeTurnos.turnoJugadorNegro = false;
+                                     manejadorDeTurnos.turnoJugadorRojo = true;
+                                 }
+                                 
+                             }
+
                         
                          }
                         else if (fichaSeleccionada.canMove(posFichaSeleccionada, casillaEvaluada.Posicion) == 1 && estatusCasilla(casillaEvaluada.Posicion).NohayUnaFicha && !jugadorDebeComer(fichaSeleccionada.Color))
@@ -577,6 +611,20 @@ namespace DragAndDrop
                             posDestino = casillaEvaluada.Posicion;
                             itemToDeselect.Position = posDestino;
                             canNotMove = false;
+
+                            // Se verifica el color para ceder el turno al otro jugador
+                            if (fichaSeleccionada.Color == Colores.Red)
+                            {
+                                manejadorDeTurnos.turnoJugadorRojo = false;
+                                manejadorDeTurnos.turnoJugadorNegro = true;
+                            }
+                            else
+                            {
+                                manejadorDeTurnos.turnoJugadorNegro = false;
+                                manejadorDeTurnos.turnoJugadorRojo = true;
+                            }
+
+                            
                         }
                     }
                 }

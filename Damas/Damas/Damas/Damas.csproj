@@ -115,6 +115,7 @@
     <Compile Include="Model\Casilla.cs" />
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\Ficha.cs" />
+    <Compile Include="Model\manejadorDeTurnos.cs" />
     <Compile Include="Model\Queen.cs" />
     <Compile Include="Model\Red.cs" />
     <Compile Include="Model\RedQueen.cs" />
