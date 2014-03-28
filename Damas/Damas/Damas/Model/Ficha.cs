@@ -13,12 +13,11 @@ namespace DragAndDrop
            
       private Colores color;       
       protected Vector2 posicion;       
-      private Texture2D img;             
+          
       private List<Vector2> posiblesMovidasComer = new List<Vector2>();
       
       public Colores Color { get { return this.color; } set { color = value; } }
-   
-      public Texture2D Img { get { return this.img; } set { img = value; } }
+       
 
       public abstract int canMove(Vector2 posicionInicial, Vector2 PosicionFinal);
 

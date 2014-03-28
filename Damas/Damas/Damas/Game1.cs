@@ -264,7 +264,7 @@ namespace Damas
             spriteBatch.Begin();
            // spriteBatch.Draw(texture, new Vector2(50,20), Color.White);
             spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
-           tablero.draw(spriteBatch, _currentMousePosition);
+           tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
           foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
             spriteBatch.End();
 

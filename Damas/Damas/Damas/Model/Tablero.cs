@@ -124,12 +124,43 @@ namespace DragAndDrop.Model
         }
             
 
-       public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition)
+       public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition, DragAndDropController<Item> _dragAndDropController)
        {
            float opacity;
            Color colorToUse = Color.White;
            const int _tileSize = 80;
-           Rectangle squareToDrawPosition = new Rectangle();  //the square to draw (local variable to avoid creating a new variable per square)
+           //the square to draw (local variable to avoid creating a new variable per square)
+           Rectangle squareToDrawPosition = new Rectangle();  
+           
+           //Lista para guardar las fichas que pueden comer
+          // List<Ficha> fichasPuedenComer= new List<Ficha>();
+
+           Red fichaPrueba = new Red(spritebatch, _whiteSquare, new Vector2(0, 0));
+
+           /*Se determinan las fichas que pueden comer y se guardan  */
+           foreach (var fichaAEvaluar in _dragAndDropController.Items)
+           {
+                    //Se colorean las casillas de las fichas que deben comer   
+                   if (_dragAndDropController.fichaPuedeComer(fichaAEvaluar) && fichaAEvaluar.Color.Equals(Colores.Red) && 
+                       manejadorDeTurnos.turnoJugadorRojo == true)
+                   {
+                       fichaPrueba.addJugadaParaComerFicha(fichaAEvaluar.Position);
+                       fichaAEvaluar.removeJugadasParaComerFicha();
+                   }
+                   else if (_dragAndDropController.fichaPuedeComer(fichaAEvaluar) && fichaAEvaluar.Color.Equals(Colores.Black) &&
+                       manejadorDeTurnos.turnoJugadorNegro == true)
+                   {
+                       fichaPrueba.addJugadaParaComerFicha(fichaAEvaluar.Position);
+                       fichaAEvaluar.removeJugadasParaComerFicha();
+                   
+                   }
+               
+           }
+
+           
+
+
+
            // Se recorre el arreglo de casillas
            for (int y = 0; y < casillas.GetLength(0); y++)
            {
@@ -138,6 +169,7 @@ namespace DragAndDrop.Model
                    //figure out where to draw the square
                    squareToDrawPosition = new Rectangle((int)(x * _tileSize + posicion.X), (int)(y * _tileSize + posicion.Y), _tileSize, _tileSize);
 
+                   Vector2 squarePosition = new Vector2(x * _tileSize + posicion.X, y * _tileSize + posicion.Y);
                    //if we add the x and y value of the tile
                    //and it is even, we make it one third opaque
                    if ((x + y) % 2 == 0)
@@ -150,7 +182,7 @@ namespace DragAndDrop.Model
                        opacity = .1f;
                    }
                    //make the square the mouse is over red
-                   if (/*IsMouseInsideBoard() &&*/ IsMouseOnTile(x, y,_currentMousePosition))
+                   if (IsMouseOnTile(x, y,_currentMousePosition))
                    {
                        colorToUse = Color.Red;
                        opacity = .5f;
@@ -165,6 +197,13 @@ namespace DragAndDrop.Model
                    spritebatch.Draw(c1.Img, c1.Posicion,null, Color.WhiteSmoke);
                    //draw the white square at the given position, offset by the x- and y-offset, in the opacity desired
                    spritebatch.Draw(_whiteSquare, squareToDrawPosition, colorToUse * opacity);
+
+                   if (fichaPrueba.esJugadaParaComerFicha(squarePosition) == true)
+                   {
+                       colorToUse = Color.DarkGreen;
+                       opacity = 0.5f;
+                       spritebatch.Draw(_whiteSquare, squareToDrawPosition, colorToUse * opacity);
+                   }
                
                }
            }
