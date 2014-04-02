@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Damas.Model
 {
-    enum GameState { Start, InGame, GameOver, ayuda };
+    
     public enum Colores { White= 0, Black = 1, Red = 2 }
 
    public struct estatusCasillas
@@ -14,5 +14,12 @@ namespace Damas.Model
         public Colores colorDeLaFicha;
     
     }
+
+   // Represents different types of network messages
+   public enum MessageType
+   {
+       StartGame, EndGame, RestartGame,
+       RejoinLobby, UpdatePlayerPos, updateTurnos
+   }
     
 }

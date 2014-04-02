@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Damas.Model;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Damas.DragAndDropTools;
 
 namespace DragAndDrop.Model
 {
@@ -50,7 +51,6 @@ namespace DragAndDrop.Model
 
        private void setColorCasillas(ContentManager content)
        {
-           //Primero se colorean las filas pares
            Colores colorEnUso = Colores.Black;
 
            for(int j=0; j < casillas.GetLength(0); j++)
@@ -90,7 +90,7 @@ namespace DragAndDrop.Model
            {
                for (int i = 0; i < casillas.GetLength(1); i++)
                {
-                   if (casillas[j, i].Color == 0)
+                   if (casillas[j, i].Color == Colores.White)
                    {
                        var fichaNegra = new Black(spriteBatch,ImgfichaNegra, casillas[j,i].Posicion);
                        
@@ -124,7 +124,7 @@ namespace DragAndDrop.Model
         }
             
 
-       public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition, DragAndDropController<Item> _dragAndDropController)
+       public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition, DragAndDropControllerNET<Item> _dragAndDropController)
        {
            float opacity;
            Color colorToUse = Color.White;

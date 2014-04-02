@@ -21,7 +21,7 @@ namespace DragAndDrop
 
       public abstract int canMove(Vector2 posicionInicial, Vector2 PosicionFinal);
 
-      public void comerFicha(Casilla final) { }
+    //  public void comerFicha(Casilla final) { }
 
       public bool esJugadaParaComerFicha(Vector2 jugadaAEvaluar)
       {

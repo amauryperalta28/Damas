@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DragAndDropTools\DragAndDropController.cs" />
+    <Compile Include="DragAndDropTools\DragAndDropControllerNET.cs" />
     <Compile Include="DragAndDropTools\IDragAndDropItem.cs" />
     <Compile Include="DragAndDropTools\Item.cs" />
     <Compile Include="Model\Black.cs" />
@@ -116,6 +117,7 @@
     <Compile Include="Model\Enums.cs" />
     <Compile Include="Model\Ficha.cs" />
     <Compile Include="Model\manejadorDeTurnos.cs" />
+    <Compile Include="Model\NetGameManager.cs" />
     <Compile Include="Model\Queen.cs" />
     <Compile Include="Model\Red.cs" />
     <Compile Include="Model\RedQueen.cs" />
@@ -160,6 +162,16 @@
       <ProductName>Microsoft XNA Framework Redistributable 4.0</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Diagramas UML\TableroClassDiag.cd" />
+    <None Include="Diagramas UML\RedQueenClassDiag.cd" />
+    <None Include="Diagramas UML\RedclassDiag.cd" />
+    <None Include="Diagramas UML\QueenClassDiag.cd" />
+    <None Include="Diagramas UML\FichaClassDiag.cd" />
+    <None Include="Diagramas UML\Casillaclassdiag.cd" />
+    <None Include="Diagramas UML\BlackQueendiag.cd" />
+    <None Include="Diagramas UML\BlackClassdiag.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />

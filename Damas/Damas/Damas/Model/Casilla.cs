@@ -15,7 +15,15 @@ namespace DragAndDrop
         private Texture2D img;
         private Ficha fichaContenida;
 
-        public Colores Color { get { return this.color; } set { color = value; } }
+        public Colores Color { 
+            get { 
+                return this.color; 
+            } 
+            
+            set { 
+                color = value; 
+            } 
+        }
         public Vector2 Posicion { get { return this.posicion; } set { posicion = value;} }
         public Texture2D Img {get { return this.img; } set { img = value;} }
         public Ficha FichaContenida { get { return this.fichaContenida; } set { fichaContenida = value; } }
