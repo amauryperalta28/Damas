@@ -84,6 +84,8 @@ namespace Damas
             //Network stuff
             NetGameManager.InitPacketReader();
             NetGameManager.InitPacketWriter();
+            NetGameManager.posInJugadorRemoto = new Vector2(0,0);
+            NetGameManager.posFinJugadorRemoto = new Vector2(0, 0);
 
             base.Initialize();
         }
@@ -249,16 +251,7 @@ namespace Damas
         protected override void Update(GameTime gameTime)
         {
            
-            KeyboardState keyboardState = Keyboard.GetState();
-            GamePadState gamePadSate = GamePad.GetState(PlayerIndex.One);
-            // If player presses Enter or A button, restart game
-            if (keyboardState.IsKeyDown(Keys.P) ||
-            gamePadSate.Buttons.A == ButtonState.Pressed)
-            {
-               // _dragDropController.moverFicha(new Vector2(150, 20), new Vector2(70, 260));
-                
-            }
-                
+                            
 
             //get the current state of the mouse (position, buttons, etc.)
             _currentMouse = Mouse.GetState();
@@ -445,7 +438,7 @@ namespace Damas
         private void Update_InGame(GameTime gameTime)
         {
             // Update the local player
-           // UpdateLocalPlayer(gameTime);
+           
             // Read any incoming data
             ProcessIncomingData(gameTime);
             // Only host checks for collisions
@@ -553,13 +546,49 @@ namespace Damas
             StartGame();
         }
 
+        protected void UpdateBoard()
+        {
+            Vector2 posReferencia = new Vector2(0, 0);
+            //Se recibe los posicion origen y la posicion destino de la ficha que se movio
+            
+
+            if (NetGameManager.posInJugadorRemoto.Equals(posReferencia))
+            {
+                //Se recibe la posicion inicial
+                Vector2 posicion = NetGameManager.packetReader.ReadVector2();
+                NetGameManager.posInJugadorRemoto = posicion;
+            }
+            else if (NetGameManager.posFinJugadorRemoto.Equals(posReferencia))
+            {
+                //Se recibe la posicion final
+                Vector2 posicion = NetGameManager.packetReader.ReadVector2();
+                NetGameManager.posFinJugadorRemoto = posicion;
+
+                //Se mueve la ficha indicada en el tablero donde dijo el jugador remoto
+                _dragDropController.moverFicha(NetGameManager.posInJugadorRemoto, NetGameManager.posFinJugadorRemoto);
+
+                //Se eliminan las posiciones guardas
+                NetGameManager.posInJugadorRemoto = posReferencia;
+                NetGameManager.posFinJugadorRemoto = posReferencia;
+                
+            }
+            
+           
+            
+
+            
+
+        
+        }
         protected void UpdateTurns()
         { 
             //Se recibe el cambio de turno del otro jugador
-            bool turnoJugadorRojo = NetGameManager.packetReader.ReadBoolean();
+            int turnoJugadorRojo = NetGameManager.packetReader.ReadInt32();
+           // Boolean turnoJugadorRojo = NetGameManager.packetReader.ReadBoolean();
+            
 
             // Se verifica si es el turno del jugador de color rojo
-            if (turnoJugadorRojo == true)
+            if (turnoJugadorRojo == 1)
             {
                 manejadorDeTurnos.turnoJugadorRojo = true;
                 manejadorDeTurnos.turnoJugadorNegro = false;
@@ -573,27 +602,7 @@ namespace Damas
 
         
         }
-      /*  protected void UpdateRemotePlayer(GameTime gameTime)
-        {
-            // Get the other (nonlocal) player
-            NetworkGamer theOtherGuy = GetOtherPlayer();
-            // Get the UserControlledSprite representing the other player
-            UserControlledSprite theOtherSprite = ((UserControlledSprite)theOtherGuy.Tag);
-            // Read in the new position of the other player
-            Vector2 otherGuyPos = packetReader.ReadVector2();
-            // If the sprite is being chased,
-            // retrieve and set the score as well
-            if (!theOtherSprite.isChasing)
-            {
-                int score = packetReader.ReadInt32();
-                theOtherSprite.score = score;
-            }
-            // Set the position
-            theOtherSprite.Position = otherGuyPos;
-            // Update only the frame of the other sprite
-            // (no need to update position because you just did!)
-            theOtherSprite.Update(gameTime, Window.ClientBounds, false);
-        }*/
+      
 
         protected NetworkGamer GetOtherPlayer()
         {
@@ -642,8 +651,11 @@ namespace Damas
                         case MessageType.UpdatePlayerPos:
                           //  UpdateRemotePlayer(gameTime);
                             break;
-                        case MessageType.updateTurnos:
+                        case MessageType.UpdateTurnos:
                             UpdateTurns();
+                            break;
+                        case MessageType.UpdateTablero:
+                            UpdateBoard();
                             break;
                     }
                 }
@@ -668,16 +680,30 @@ namespace Damas
             if (e.Gamer.IsHost)
             {
                 Colores colorJugador = Colores.Black;
-                NetGameManager.colorJugadorLocal = colorJugador;
+                NetGameManager.colorJugadorHost = colorJugador;
                 NetGameManager.colorJugadorRemoto = Colores.Red;
-                e.Gamer.Tag = NetGameManager.colorJugadorLocal;
+
+                // Se deciden los turnos
+                manejadorDeTurnos.turnoJugadorRojo = false;
+                manejadorDeTurnos.turnoJugadorNegro = true;
+
+                // Se indica el tipo de jugador que es
+                NetGameManager.tipoJugador = "host";
+                e.Gamer.Tag = NetGameManager.colorJugadorHost;
             }
             else
             {
-                Colores colorJugador = Colores.Red;
-                NetGameManager.colorJugadorLocal = colorJugador;
-                NetGameManager.colorJugadorRemoto = Colores.Black;
-                e.Gamer.Tag = NetGameManager.colorJugadorLocal;
+                Colores colorJugador = Colores.Black;
+                NetGameManager.colorJugadorHost = colorJugador;
+                NetGameManager.colorJugadorRemoto = Colores.Red;
+
+                // Se deciden los turnos
+                manejadorDeTurnos.turnoJugadorRojo = true;
+                manejadorDeTurnos.turnoJugadorNegro = false;
+
+                // Se indica el tipo de jugador que es
+                NetGameManager.tipoJugador = "remoto";
+                e.Gamer.Tag = NetGameManager.colorJugadorRemoto;
             }
         }
 

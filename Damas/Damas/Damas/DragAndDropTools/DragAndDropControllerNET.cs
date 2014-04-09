@@ -364,16 +364,7 @@ namespace Damas.DragAndDropTools
                 posFichaAEliminar = new Vector2(posInicial.X - 80, posInicial.Y + 80);
 
             //Recorro las fichas del tablero 
-            /* foreach (var fichaEvaluada in _items)
-             {
-                 // Verifico si la posicion de la ficha a eliminar es igual a la ficha que estoy evaluando
-                 if (fichaEvaluada.Position.Equals(posFichaAEliminar))
-                 {
-                     Remove(fichaEvaluada);                
-                 }
- 
-             }
-             */
+          
             for (int i = _items.Count - 1; i >= 0; i--)
             {
                 for (int x = 70; x <= 630; x = x + 80)
@@ -392,6 +383,30 @@ namespace Damas.DragAndDropTools
             }
         }
 
+        public void moverFicha(Vector2 posInicialFicha, Vector2 posFinalFicha)
+        {
+
+            // Recorro el arreglo de fichas
+            for (int i = _items.Count - 1; i >= 0; i--)
+            {
+                for (int x = 70; x <= 630; x = x + 80)
+                {
+                    Ficha fichaEvaluada = _items.ElementAt(i);
+                    // Verifico si la ficha tiene la posicion que busco
+                    if (fichaEvaluada.Position.Equals(posInicialFicha))
+                    {
+                        //Cambio la posicion de la ficha, a la posicion a la quiero mover la ficha
+                        fichaEvaluada.Position = posFinalFicha;
+                        return;
+
+                    }
+
+                }
+
+            }
+
+
+        }
         #endregion
 
 
@@ -537,14 +552,14 @@ namespace Damas.DragAndDropTools
             /* if (!_selectedItems.Contains(itemToSelect))
              {*/
             //Se verifica si es el turno del jugador local y si es su color de ficha para jugar
-            if (itemToSelect.Color.Equals(NetGameManager.colorJugadorLocal) && manejadorDeTurnos.turnoJugadorRojo == true)
+            if (NetGameManager.tipoJugador.Equals("host") && itemToSelect.Color.Equals(NetGameManager.colorJugadorHost) && manejadorDeTurnos.turnoJugadorNegro == true)
             {
                 itemToSelect.IsSelected = true;
                 _selectedItems.Add(itemToSelect);
 
             }
             //Se verifica si es el turno del jugador local y si es su color de ficha para jugar
-            else if (itemToSelect.Color.Equals(NetGameManager.colorJugadorLocal) && manejadorDeTurnos.turnoJugadorNegro == true)
+            else if (NetGameManager.tipoJugador.Equals("remoto") && itemToSelect.Color.Equals(NetGameManager.colorJugadorRemoto) && manejadorDeTurnos.turnoJugadorRojo == true)
             {
                 itemToSelect.IsSelected = true;
                 _selectedItems.Add(itemToSelect);
@@ -580,81 +595,52 @@ namespace Damas.DragAndDropTools
                     if ((posDestino.X > casillaEvaluada.Posicion.X && posDestino.X <= casillaEvaluada.Posicion.X + 80) && (posDestino.Y > casillaEvaluada.Posicion.Y && posDestino.Y <= casillaEvaluada.Posicion.Y + 80))
                     {
 
-
-                        if (jugadorDebeComer(fichaSeleccionada.Color) && fichaPuedeComer(fichaSeleccionada) && fichaSeleccionada.esJugadaParaComerFicha(casillaEvaluada.Posicion))
+                        if (NetGameManager.tipoJugador.Equals("host"))
                         {
-                            posDestino = casillaEvaluada.Posicion;
-                            identificarYEliminarFicha(fichaSeleccionada.Position, casillaEvaluada.Posicion);
-                            itemToDeselect.Position = posDestino;
-                            canNotMove = false;
+                            manejadorDeTurnos.turnoJugadorRojo = true;
+                            manejadorDeTurnos.turnoJugadorNegro = false;
 
-                            // Se verifica el color para ceder el turno al otro jugador
-                            if (fichaSeleccionada.Color == Colores.Red)
-                            {
-                                // Se verifica si la ficha puede seguir comiendo
-                                if (fichaPuedeComer(itemToDeselect) == false)
-                                {
-                                    manejadorDeTurnos.turnoJugadorRojo = false;
-                                    manejadorDeTurnos.turnoJugadorNegro = true;
+                            // Se envia al jugador remoto o local que ya es su turno
+                            NetGameManager.packetWriter.Write((int)MessageType.UpdateTurnos);
+                            NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
 
-                                    // Se envia al jugador remoto o local que ya es su turno
-                                    NetGameManager.packetWriter.Write((int)MessageType.updateTurnos);
-                                    NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
-
-                                    NetGameManager.packetWriter.Write((bool)manejadorDeTurnos.turnoJugadorRojo);
-                                    NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
-
-                                    
-                                    
-                                }
-                            }
-                            else
-                            {
-                                // Se verifica si la ficha puede seguir comiendo
-                                if (fichaPuedeComer(itemToDeselect) == false)
-                                {
-                                    manejadorDeTurnos.turnoJugadorNegro = false;
-                                    manejadorDeTurnos.turnoJugadorRojo = true;
-
-                                    // Se envia al jugador remoto o local que ya es su turno
-                                    NetGameManager.packetWriter.Write((bool)manejadorDeTurnos.turnoJugadorRojo);
-
-                                    NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
-                                }
-
-                            }
-
-
+                            NetGameManager.packetWriter.Write((bool)manejadorDeTurnos.turnoJugadorRojo);
+                            NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
+                        
                         }
-                        else if (fichaSeleccionada.canMove(posFichaSeleccionada, casillaEvaluada.Posicion) == 1 && estatusCasilla(casillaEvaluada.Posicion).NohayUnaFicha && !jugadorDebeComer(fichaSeleccionada.Color))
+                        else if (NetGameManager.tipoJugador.Equals("remoto"))
                         {
-                            posDestino = casillaEvaluada.Posicion;
-                            itemToDeselect.Position = posDestino;
-                            canNotMove = false;
+                            manejadorDeTurnos.turnoJugadorRojo = true;
+                            manejadorDeTurnos.turnoJugadorNegro = false;
 
-                            // Se verifica el color para ceder el turno al otro jugador
-                            if (fichaSeleccionada.Color == Colores.Red)
-                            {
-                                manejadorDeTurnos.turnoJugadorRojo = false;
-                                manejadorDeTurnos.turnoJugadorNegro = true;
-                            }
-                            else
-                            {
-                                manejadorDeTurnos.turnoJugadorNegro = false;
-                                manejadorDeTurnos.turnoJugadorRojo = true;
-                            }
+                            // Se envia al jugador remoto o local que ya es su turno
+                            NetGameManager.packetWriter.Write((int)MessageType.UpdateTurnos);
+                            NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
 
+                            int force = 1;
+                            NetGameManager.packetWriter.Write((int)force);
+                            NetGameManager.localGamer.SendData(NetGameManager.packetWriter, SendDataOptions.Reliable);
 
+                            
+                        
+                        
                         }
+                        posDestino = casillaEvaluada.Posicion;
+                        identificarYEliminarFicha(fichaSeleccionada.Position, casillaEvaluada.Posicion);
+                        itemToDeselect.Position = posDestino;
+                        canNotMove = false;
+
+                       
+                        
                     }
                 }
 
             }
-            if (canNotMove)
-                itemToDeselect.Position = posFichaSeleccionada;
+           // if (canNotMove)
+             //   itemToDeselect.Position = posFichaSeleccionada;
 
             _selectedItems.Remove(itemToDeselect);
-            fichaSeleccionada.removeJugadasParaComerFicha();
+            
         }
         #endregion
 

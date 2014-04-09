@@ -7,8 +7,8 @@ namespace Damas.Model
 {
     public static class manejadorDeTurnos
     {
-       public static bool turnoJugadorRojo = true;
-       public  static bool turnoJugadorNegro = false;
+       public static bool turnoJugadorRojo;
+       public  static bool turnoJugadorNegro;
 
        
     }
