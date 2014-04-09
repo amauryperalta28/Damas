@@ -19,7 +19,7 @@ namespace Damas.Model
    public enum MessageType
    {
        StartGame, EndGame, RestartGame,
-       RejoinLobby, UpdatePlayerPos, UpdateTurnos, UpdateTablero
+       RejoinLobby, UpdatePlayerPos, updateTurnos
    }
     
 }
