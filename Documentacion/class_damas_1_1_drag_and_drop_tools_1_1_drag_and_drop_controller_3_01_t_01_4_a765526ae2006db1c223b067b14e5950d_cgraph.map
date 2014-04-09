@@ -1,0 +1,5 @@
+<map id="Damas.DragAndDropTools.DragAndDropController&lt; T &gt;.fichaPuedeComer" name="Damas.DragAndDropTools.DragAndDropController&lt; T &gt;.fichaPuedeComer">
+<area shape="rect" id="node3" href="$class_damas_1_1_model_1_1_ficha.html#ab5214521dd8e8d7d448311079bc156a1" title="Inserta una posicion indicada en la lista de posibles Movidas para comer ficha." alt="" coords="319,5,521,51"/>
+<area shape="rect" id="node5" href="$class_damas_1_1_model_1_1_ficha.html#a2580b47830456face3acc3e79d02e704" title="Determina si la ficha se puede mover a una posicion indicada." alt="" coords="324,75,516,104"/>
+<area shape="rect" id="node7" href="$class_damas_1_1_model_1_1_ficha.html#a83b71cbce4c4dc58e662be9cc40d21e8" title="Determina si la posicion esta en los limites permitidos." alt="" coords="317,127,523,174"/>
+</map>

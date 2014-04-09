@@ -6,15 +6,26 @@ using Microsoft.Xna.Framework;
 using Damas.Model;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using DragAndDrop;
+using Damas.DragAndDropTools;
 
-namespace DragAndDrop.Model
+namespace Damas.Model
 {
     public class Tablero
     {
-       public Casilla[,] casillas = new Casilla[8,8];
-       private Vector2 posicion;
-       Texture2D _whiteSquare;
 
+       private Casilla[,] casillas = new Casilla[8,8];
+       private Vector2 posicion;
+
+       // Atributo que ayuda a dibujar la segunda capa del tablero
+       private Texture2D _whiteSquare;
+
+       /**Arreglo de casillas  */
+       public Casilla[,] Casillas { get { return casillas; }
+
+       }
+
+       /** Constructores*/
        public Tablero(ContentManager content)
        {
            //Se inicializa la posicion del tablero
@@ -48,7 +59,13 @@ namespace DragAndDrop.Model
        
        }
 
-       private void setColorCasillas(ContentManager content)
+       /** @brief Indica a cada casilla del tablero cual es su color
+        * 
+        * @param[in]   content            Es el objeto que interactua con los contenidos como fotos, audios, etc
+        *  
+        * @return      no retorna nada
+        */ 
+       protected void setColorCasillas(ContentManager content)
        {
            //Primero se colorean las filas pares
            Colores colorEnUso = Colores.Black;
@@ -80,7 +97,14 @@ namespace DragAndDrop.Model
 
        }
 
-       private void setFichasTablero(ContentManager content, SpriteBatch spriteBatch)
+       /** @brief   Coloca todas las fichas en sus respectivos lugares
+        * 
+        * @param[in]   content            Es el objeto que interactua con los contenidos como fotos, audios, etc
+        * @param[in]   spriteBatch        Es el objeto que nos ayuda a dibujar imagenes en la pantalla
+        * 
+        * @return      no retorna nada
+        */
+       protected void setFichasTablero(ContentManager content, SpriteBatch spriteBatch)
        {
            
            Texture2D ImgfichaNegra = content.Load<Texture2D>("Images/ficha1");
@@ -116,31 +140,39 @@ namespace DragAndDrop.Model
        
        }
 
-       
-       
-       public Casilla[,] getCasillas()
-        {
-            return casillas;
-        }
-            
 
+       /** @brief Permite  Dibujar el tablero 
+        *  
+        * Se dibujan tres capas del tablero, en la primera capa se dibuja el tablero con las fichas
+        * en la segunda capa se dibuja otro tablero mas transparente encima, en el que se dibuja en que casilla
+        * esta el mouse parado. La tercera capa colorea de verde la posicion de las casillas que tienen que comer
+        * una ficha si hay alguna.
+        * 
+        * @param[in]  spritebatch             Es el objeto que nos ayuda a dibujar imagenes en la pantalla
+        * @param[in]  _currentMousePosition   Es la posicion en la que se encuentra el mouse.
+        * @param[in]  _dragAndDropController  Es el objeto que contiene la lista de fichas y controla el dragAndDrop
+        * 
+        * @return     no retorna nada
+        *
+        */
        public void draw(SpriteBatch spritebatch, Vector2 _currentMousePosition, DragAndDropController<Item> _dragAndDropController)
        {
            float opacity;
            Color colorToUse = Color.White;
+
+           // Dimensiones de las casillas 80px x 80px
            const int _tileSize = 80;
+
            //the square to draw (local variable to avoid creating a new variable per square)
            Rectangle squareToDrawPosition = new Rectangle();  
-           
-           //Lista para guardar las fichas que pueden comer
-          // List<Ficha> fichasPuedenComer= new List<Ficha>();
-
+                     
+           //Objeto en el que se insertaran todas las posiciones de las fichas que pueden comer otras fichas
            Red fichaPrueba = new Red(spritebatch, _whiteSquare, new Vector2(0, 0));
 
            /*Se determinan las fichas que pueden comer y se guardan  */
            foreach (var fichaAEvaluar in _dragAndDropController.Items)
            {
-                    //Se colorean las casillas de las fichas que deben comer   
+                    // Se verifica de quien es el turno para colorear las casillas de las fichas que pueden comer
                    if (_dragAndDropController.fichaPuedeComer(fichaAEvaluar) && fichaAEvaluar.Color.Equals(Colores.Red) && 
                        manejadorDeTurnos.turnoJugadorRojo == true)
                    {
@@ -156,10 +188,6 @@ namespace DragAndDrop.Model
                    }
                
            }
-
-           
-
-
 
            // Se recorre el arreglo de casillas
            for (int y = 0; y < casillas.GetLength(0); y++)
@@ -198,8 +226,10 @@ namespace DragAndDrop.Model
                    //draw the white square at the given position, offset by the x- and y-offset, in the opacity desired
                    spritebatch.Draw(_whiteSquare, squareToDrawPosition, colorToUse * opacity);
 
+                   // Se verifican si hay fichas que pueden comer otras fichas
                    if (fichaPrueba.esJugadaParaComerFicha(squarePosition) == true)
                    {
+                       //Se colorean las casillas de dichas fichas de verde.
                        colorToUse = Color.DarkGreen;
                        opacity = 0.5f;
                        spritebatch.Draw(_whiteSquare, squareToDrawPosition, colorToUse * opacity);
@@ -210,8 +240,15 @@ namespace DragAndDrop.Model
        
        }
 
-       // Checks to see whether a given coordinate is within the board
-       private bool IsMouseOnTile(int x, int y, Vector2 _currentMousePosition)
+        /** @brief     Determina si una coordenada proporcionada se encuentra dentro del tablero
+         * 
+         * @param[in] x                      Posicion x a evaluar
+         * @param[in] y                      Posicion y a evaluar
+         * @param[in] _currentMousePosition  Posicion actual del mouse
+         * 
+         * @return    no retorna nada
+         */ 
+       protected bool IsMouseOnTile(int x, int y, Vector2 _currentMousePosition)
        {
            const int _tileSize = 80;
            //do an integerdivision (whole-number) of the coordinates relative to the board offset with the tilesize in mind

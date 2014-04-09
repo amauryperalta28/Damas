@@ -3,10 +3,11 @@ using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
-using DragAndDrop.Model;
-using Damas.Model;
 
-namespace DragAndDrop
+using Damas.Model;
+using DragAndDrop;
+
+namespace Damas.DragAndDropTools
 {
     /// <summary>
     /// Controllerclass for easy drag and drop in XNA
@@ -121,7 +122,7 @@ namespace DragAndDrop
 
         #region implementacion propia de metodos
 
-        /* @brief Determina si en una posicion especificada se encuentra una ficha
+        /** @brief Determina si en una posicion especificada se encuentra una ficha
          * 
          * @param[in]  posicion         Esta es la posicion que se va a evaluar
          * 
@@ -151,7 +152,7 @@ namespace DragAndDrop
             return estatusCasillaEvaluada;
         }
 
-        /* @brief Convierte en Reina la ficha que llega a la primera fila del oponente
+        /** @brief Convierte en Reina la ficha que llega a la primera fila del oponente
          * 
          * @return      no retorna nada
          */
@@ -198,7 +199,7 @@ namespace DragAndDrop
         
         }
 
-        /* @brief   Determina la cantidad de fichas rojas que hay en el tablero
+        /** @brief   Determina la cantidad de fichas rojas que hay en el tablero
          * 
          * @return      El numero de fichas rojas
          */
@@ -215,7 +216,7 @@ namespace DragAndDrop
         
         }
 
-       /* @brief   Determina la cantidad de fichas negras que hay en el tablero
+       /** @brief   Determina la cantidad de fichas negras que hay en el tablero
         * 
         * @return      El numero de fichas negras
         */
@@ -232,12 +233,12 @@ namespace DragAndDrop
 
        }
 
-        /* @brief  Determina si una ficha puede comer otra ficha
+        /** @brief  Determina si una ficha puede comer otra ficha
          *         Si puede realizar una movida para comer otra ficha, esta se agrega en la lista
          *         de posiciones en la que puede comer la ficha.
          * 
          * 
-         * @param[in]  ficha        ficha a evaluar
+         * @param[in]  fichaAEvaluar        ficha a evaluar
          * 
          * @return                  true si puede comer, false de lo contrario
          * 
@@ -310,9 +311,9 @@ namespace DragAndDrop
              return posEnLasQuePuedeComer > 0 ? true : false;
         }
 
-        /* @brief  Determina si un jugador debe comer otra ficha
+        /** @brief  Determina si un jugador debe comer otra ficha
          * 
-         * @param[in]  color        color del jugador
+         * @param[in]  colorJugador        color del jugador
          * 
          * @return                  true si debe que comer, false de lo contrario
          * 
@@ -334,7 +335,7 @@ namespace DragAndDrop
         
         }
 
-        /* @brief Determina la posicion de la ficha que debe eliminarse y la elimina
+        /** @brief Determina la posicion de la ficha que debe eliminarse y la elimina
          * 
          * @param[in] posInicial            Esta es la posicion inicial de la ficha
          * @param[in] posFinal              Esta es la posicion final de la ficha
@@ -359,16 +360,7 @@ namespace DragAndDrop
                     posFichaAEliminar = new Vector2(posInicial.X - 80, posInicial.Y + 80);
 
             //Recorro las fichas del tablero 
-           /* foreach (var fichaEvaluada in _items)
-            {
-                // Verifico si la posicion de la ficha a eliminar es igual a la ficha que estoy evaluando
-                if (fichaEvaluada.Position.Equals(posFichaAEliminar))
-                {
-                    Remove(fichaEvaluada);                
-                }
- 
-            }
-            */
+          
             for (int i = _items.Count - 1; i >= 0; i--)
             {
                 for (int x = 70; x <= 630; x = x + 80)
@@ -389,8 +381,7 @@ namespace DragAndDrop
 
         #endregion
      
-
-        
+               
 
         #region public interaction methods
 
@@ -529,8 +520,7 @@ namespace DragAndDrop
         private void SelectItem(Ficha itemToSelect)
         {
             
-           /* if (!_selectedItems.Contains(itemToSelect))
-            {*/
+           
                 //Se verifica si es el turno del jugador rojo para jugar
                 if (itemToSelect.Color.Equals(Colores.Red) && manejadorDeTurnos.turnoJugadorRojo == true)
                 {
@@ -545,7 +535,7 @@ namespace DragAndDrop
                     _selectedItems.Add(itemToSelect);
                     
                 }
-           // }
+          
 
             
         }
@@ -564,74 +554,75 @@ namespace DragAndDrop
             // Se crea un tablero para saber la posicion de la casilla en la que se dio click
             Tablero t1 = new Tablero(Game.Content, _spriteBatch);
 
-            for (int y = 0; y < t1.casillas.GetLength(0); y++)
+            for (int y = 0; y < t1.Casillas.GetLength(0); y++)
             {
-                for (int x = 0; x < t1.casillas.GetLength(1); x++)
+                for (int x = 0; x < t1.Casillas.GetLength(1); x++)
                 {
-                    Casilla casillaEvaluada = t1.casillas[x, y];
+                    Casilla casillaEvaluada = t1.Casillas[x, y];
 
                     /*  Si el puntero esta dentro de una casilla, ponle la posicion de esa casilla
                      *  al objeto seleccionado.  */
                     if ((posDestino.X > casillaEvaluada.Posicion.X && posDestino.X <= casillaEvaluada.Posicion.X + 80) && (posDestino.Y > casillaEvaluada.Posicion.Y && posDestino.Y <= casillaEvaluada.Posicion.Y + 80))
                     {
-                        
-                        
-                       if (jugadorDebeComer(fichaSeleccionada.Color) && fichaPuedeComer(fichaSeleccionada) && fichaSeleccionada.esJugadaParaComerFicha(casillaEvaluada.Posicion))
-                         {
-                             posDestino = casillaEvaluada.Posicion;
-                             identificarYEliminarFicha(fichaSeleccionada.Position, casillaEvaluada.Posicion);
-                             itemToDeselect.Position = posDestino;
-                             canNotMove = false;
+                             // Se verifica si la ficha seleccionada tiene que comer otra ficha                   
+                           if (jugadorDebeComer(fichaSeleccionada.Color) && fichaPuedeComer(fichaSeleccionada) && fichaSeleccionada.esJugadaParaComerFicha(casillaEvaluada.Posicion))
+                             {
+                                 posDestino = casillaEvaluada.Posicion;
 
-                           // Se verifica el color para ceder el turno al otro jugador
-                             if (fichaSeleccionada.Color == Colores.Red)
-                             {
-                                 // Se verifica si la ficha puede seguir comiendo
-                                 if (fichaPuedeComer(itemToDeselect) == false)
-                                 {
-                                     manejadorDeTurnos.turnoJugadorRojo = false;
-                                     manejadorDeTurnos.turnoJugadorNegro = true;
-                                 }
-                             }
-                             else
-                             {
-                                 // Se verifica si la ficha puede seguir comiendo
-                                 if (fichaPuedeComer(itemToDeselect) == false)
-                                 {
-                                     manejadorDeTurnos.turnoJugadorNegro = false;
-                                     manejadorDeTurnos.turnoJugadorRojo = true;
-                                 }
+                                 // Se elimina la ficha comida
+                                 identificarYEliminarFicha(fichaSeleccionada.Position, casillaEvaluada.Posicion);
+                                 itemToDeselect.Position = posDestino;
+                                 canNotMove = false;
+
+                                   // Se verifica el color para ceder el turno al otro jugador
+                                     if (fichaSeleccionada.Color == Colores.Red)
+                                     {
+                                             // Se verifica si la ficha puede seguir comiendo
+                                             if (fichaPuedeComer(itemToDeselect) == false)
+                                             {
+                                                 manejadorDeTurnos.turnoJugadorRojo = false;
+                                                 manejadorDeTurnos.turnoJugadorNegro = true;
+                                             }
+                                     }
+                                     else
+                                     {
+                                             // Se verifica si la ficha puede seguir comiendo
+                                             if (fichaPuedeComer(itemToDeselect) == false)
+                                             {
+                                                 manejadorDeTurnos.turnoJugadorNegro = false;
+                                                 manejadorDeTurnos.turnoJugadorRojo = true;
+                                             }
                                  
-                             }
+                                     }
 
                         
-                         }
-                        else if (fichaSeleccionada.canMove(posFichaSeleccionada, casillaEvaluada.Posicion) == 1 && estatusCasilla(casillaEvaluada.Posicion).NohayUnaFicha && !jugadorDebeComer(fichaSeleccionada.Color))
-                        {
-                            posDestino = casillaEvaluada.Posicion;
-                            itemToDeselect.Position = posDestino;
-                            canNotMove = false;
+                             }
+                            else if (fichaSeleccionada.canMove(posFichaSeleccionada, casillaEvaluada.Posicion) == 1 && estatusCasilla(casillaEvaluada.Posicion).NohayUnaFicha && !jugadorDebeComer(fichaSeleccionada.Color))
+                            {
+                                    posDestino = casillaEvaluada.Posicion;
+                                    itemToDeselect.Position = posDestino;
+                                    canNotMove = false;
 
-                            // Se verifica el color para ceder el turno al otro jugador
-                            if (fichaSeleccionada.Color == Colores.Red)
-                            {
-                                manejadorDeTurnos.turnoJugadorRojo = false;
-                                manejadorDeTurnos.turnoJugadorNegro = true;
-                            }
-                            else
-                            {
-                                manejadorDeTurnos.turnoJugadorNegro = false;
-                                manejadorDeTurnos.turnoJugadorRojo = true;
-                            }
+                                    // Se verifica el color para ceder el turno al otro jugador
+                                    if (fichaSeleccionada.Color == Colores.Red)
+                                    {
+                                        manejadorDeTurnos.turnoJugadorRojo = false;
+                                        manejadorDeTurnos.turnoJugadorNegro = true;
+                                    }
+                                    else
+                                    {
+                                        manejadorDeTurnos.turnoJugadorNegro = false;
+                                        manejadorDeTurnos.turnoJugadorRojo = true;
+                                    }
 
                             
-                        }
+                            }
                     }
                 }
             
             }
                if(canNotMove)
-               itemToDeselect.Position = posFichaSeleccionada;
+                 itemToDeselect.Position = posFichaSeleccionada;
             
             _selectedItems.Remove(itemToDeselect);
             fichaSeleccionada.removeJugadasParaComerFicha();

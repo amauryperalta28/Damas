@@ -9,8 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using DragAndDrop;
-using DragAndDrop.Model;
+
 using Damas.Model;
+using Damas.DragAndDropTools;
 
 namespace Damas
 {
@@ -23,18 +24,23 @@ namespace Damas
         SpriteBatch spriteBatch;
         Texture2D fondoDelJuego;
 
-        enum GameState { Start, InGame, GameOver };
+             
+       /**  Variable de estado del juego, permite saber si el juego esta
+           en la pantalla de inicio, en el juego o si el juego terminó.
+        */
         GameState currentGameState = GameState.Start;
 
         Colores fichasNegras = Colores.Black;
         Colores fichasRojas = Colores.Red;
 
+
         private DragAndDropController<Item> _dragDropController;
+
         Tablero tablero;
        
-        //Variables para almacenar posicion actual del puntero
+        /**Variables para almacenar posicion actual del puntero*/
         MouseState _currentMouse;
-        Vector2 _currentMousePosition;          //the current position of the mouse
+        Vector2 _currentMousePosition;          //La posición actual del mouse
         
         
 
@@ -83,11 +89,13 @@ namespace Damas
             
             tablero = new Tablero(Content, spriteBatch);
             SetupDraggableItems();
+
+            // Se carga la imagen de fondo de madera
             fondoDelJuego = Content.Load<Texture2D>(@"Images/fondo");
 
             // TODO: use this.Content to load your game content here
         }
-        private void SetupDraggableItems()
+        protected void SetupDraggableItems()
         {
             Texture2D itemTexture = Content.Load<Texture2D>(@"Images/ficha1");
 
@@ -96,7 +104,7 @@ namespace Damas
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    Casilla c1 = tablero.casillas[j, i];
+                    Casilla c1 = tablero.Casillas[j, i];
                     // Si hay una ficha en la casilla insertala en el dragAndDropController
                     if (c1.FichaContenida != null)
                     {
@@ -117,13 +125,17 @@ namespace Damas
             }
         }
 
-        // Determina si algun jugador se quedo sin fichas
-        private bool alguienSeQuedoSinFichas()
+        /** @brief    Determina si algun jugador se quedo sin fichas
+         * 
+         * @return   Retorna true si alguien se quedo sin fichas, false de lo contrario 
+         */ 
+        protected bool alguienSeQuedoSinFichas()
         {
             // Determina la cantidad de fichas rojas y negras y se guardan
             int cantFichasRojas = _dragDropController.cantFichasRojas();
             int cantFichasNegras = _dragDropController.cantFichasNegras();
 
+            // Se verifica si el numero de fichas de algun color es cero.
             if (cantFichasNegras == 0 || cantFichasRojas == 0)
             {
                 
@@ -138,10 +150,12 @@ namespace Damas
         
         }
 
-        // Determina si algun jugador no puede moverse
-        // @param[in]   color       Este el color del jugador a evaluar
-        // @return      true si no se puede mover, false si puede mover
-        private bool NoPuedenMoverse(Colores color)
+        /** @brief       Determina si algun jugador no puede moverse
+         * @param[in]   color       Este el color del jugador a evaluar
+         * 
+         * @return      true si no se puede mover, false si puede mover
+         */
+        protected bool NoPuedenMoverse(Colores color)
         {
             int cantFichaEnTablero =  0;
             int cantFichasNoPuedenMoverse = 0;
@@ -167,18 +181,21 @@ namespace Damas
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
                     posicionAEvaluar = new Vector2(fichaEvaluada.Position.X - 80, fichaEvaluada.Position.Y - 80);
+
                     if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
                     posicionAEvaluar = new Vector2(fichaEvaluada.Position.X + 80, fichaEvaluada.Position.Y + 80);
+
                     if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
                         cantMovimientosNoSePuedenHacer++; //Se incrementa la cantidad de movimientos que no pueden hacerse
 
                     posicionAEvaluar = new Vector2(fichaEvaluada.Position.X - 80, fichaEvaluada.Position.Y + 80);
+                    
                     if (fichaEvaluada.canMove(fichaEvaluada.Position, posicionAEvaluar) == 1 && _dragDropController.estatusCasilla(posicionAEvaluar).NohayUnaFicha == true)
                         return false;
                     else
@@ -198,16 +215,45 @@ namespace Damas
         
         }
 
-        private bool endGame()
+        /** @brief      Determina si el juego se terminó
+         * 
+         * @return     returna true si terminó, false de lo contrario
+         */ 
+        protected bool endGame()
         {
+            // Se determina si el jugador de color negro debe comer alguna ficha
             bool NegrasnoPuedenComer = !_dragDropController.jugadorDebeComer(fichasNegras);
+
+            // Se determina si el jugador de color rojo debe comer alguna ficha
             bool rojasNoPuedenComer = !_dragDropController.jugadorDebeComer(fichasRojas);
+
             // Se verifica si alguien se quedo sin fichas, si alguien no puede moverse o si alguien no puede comer
             if (alguienSeQuedoSinFichas() || ((NoPuedenMoverse(fichasNegras) && NegrasnoPuedenComer) ||
                 (NoPuedenMoverse(fichasRojas) && rojasNoPuedenComer)) )
                 return true;
             else
                 return false;
+        
+        }
+
+        /** @brief     Resetea el juego
+         *            Se reinicializan las variables necesarias para empezar el juego
+         * 
+         * @return    no retorna nada
+         */
+        protected void resetGame()
+        { 
+            // Se envia el juego a la pantalla de inicio
+            currentGameState = GameState.InGame;
+
+            // Se resetean los turnos
+            manejadorDeTurnos.turnoJugadorRojo = true;
+            manejadorDeTurnos.turnoJugadorNegro = false;
+
+            // Se crea un nuevo tablero
+            tablero = new Tablero(Content, spriteBatch);
+            SetupDraggableItems();
+
         
         }
 
@@ -243,7 +289,8 @@ namespace Damas
 
             if (endGame())
             {
-                this.Exit();
+                resetGame();
+                //this.Exit();
             
             }
 
@@ -262,10 +309,18 @@ namespace Damas
             GraphicsDevice.Clear(Color.Gray);
 
             spriteBatch.Begin();
-           // spriteBatch.Draw(texture, new Vector2(50,20), Color.White);
-            spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
-           tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
-          foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
+           
+              // Dibuja el fondo de madera debajo del tablero
+                 spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
+
+             //  Se dibuja el tablero
+                 tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
+
+               // Se dibujan las fichas en el tablero
+                 foreach (var item in _dragDropController.Items) 
+                 { item.Draw(gameTime); }
+
+
             spriteBatch.End();
 
             // TODO: Add your drawing code here

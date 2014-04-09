@@ -1,0 +1,7 @@
+<map id="Damas.Game1.Update" name="Damas.Game1.Update">
+<area shape="rect" id="node3" href="$class_damas_1_1_game1.html#a3097b8a2209235fcaccfb52807bcdec4" title="Determina si el juego se terminó" alt="" coords="213,75,381,104"/>
+<area shape="rect" id="node9" href="$class_damas_1_1_game1.html#a020ca310dfcc9fbf8615c14ad4d0740c" title="Resetea el juego Se reinicializan las variables necesarias para empezar el juego." alt="" coords="209,132,385,161"/>
+<area shape="rect" id="node5" href="$class_damas_1_1_game1.html#a4c4e92c7a138eb9fc0c8056bdc55c2ab" title="Determina si algun jugador se quedo sin fichas." alt="" coords="441,5,649,51"/>
+<area shape="rect" id="node7" href="$class_damas_1_1_game1.html#a042c86a66163ace3ed14a2e589a5532d" title="Determina si algun jugador no puede moverse." alt="" coords="435,75,656,104"/>
+<area shape="rect" id="node11" href="$class_damas_1_1_game1.html#a9027dd6d7a8847ef4d1ffdcbad43f2fe" title="Damas.Game1.SetupDraggable\lItems" alt="" coords="443,127,648,174"/>
+</map>

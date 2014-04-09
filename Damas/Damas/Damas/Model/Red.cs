@@ -6,11 +6,17 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Damas.Model;
 
-namespace DragAndDrop.Model
+namespace Damas.Model
 {
    public class Red:Ficha
     {
-       
+        /** @brief Determina si la ficha se puede mover a una posicion indicada
+        * 
+        * @param[in]   posicionInicial             Es la posicion actual de la ficha
+        * @param[in]   PosicionFinal               Es la posicion a donde se pretende mover la ficha
+        * 
+        * @return      1 si se puede mover, 0 de lo contrario.
+        */ 
        public override int canMove(Vector2 posicionInicial, Vector2 PosicionFinal)
        {
            //Variables en la que se insertan las posiciones validas para moverse

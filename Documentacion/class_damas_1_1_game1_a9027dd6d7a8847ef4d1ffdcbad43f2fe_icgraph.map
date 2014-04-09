@@ -1,0 +1,5 @@
+<map id="Damas.Game1.SetupDraggableItems" name="Damas.Game1.SetupDraggableItems">
+<area shape="rect" id="node3" href="$class_damas_1_1_game1.html#af3ea1c9b01aa78ed033b919aed733e42" title="LoadContent will be called once per game and is the place to load all of your content. " alt="" coords="259,5,445,35"/>
+<area shape="rect" id="node5" href="$class_damas_1_1_game1.html#a020ca310dfcc9fbf8615c14ad4d0740c" title="Resetea el juego Se reinicializan las variables necesarias para empezar el juego." alt="" coords="264,59,440,88"/>
+<area shape="rect" id="node7" href="$class_damas_1_1_game1.html#ae8fcf64269b02764f50115fdd7bf63f6" title="Allows the game to run logic such as updating the world, checking for collisions, gathering input..." alt="" coords="493,59,648,88"/>
+</map>

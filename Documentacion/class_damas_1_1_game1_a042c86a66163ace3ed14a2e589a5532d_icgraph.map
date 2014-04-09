@@ -1,0 +1,4 @@
+<map id="Damas.Game1.NoPuedenMoverse" name="Damas.Game1.NoPuedenMoverse">
+<area shape="rect" id="node3" href="$class_damas_1_1_game1.html#a3097b8a2209235fcaccfb52807bcdec4" title="Determina si el juego se terminó" alt="" coords="276,5,444,35"/>
+<area shape="rect" id="node5" href="$class_damas_1_1_game1.html#ae8fcf64269b02764f50115fdd7bf63f6" title="Allows the game to run logic such as updating the world, checking for collisions, gathering input..." alt="" coords="493,5,648,35"/>
+</map>
