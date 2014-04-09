@@ -11,8 +11,6 @@ using Microsoft.Xna.Framework.Media;
 using DragAndDrop;
 using DragAndDrop.Model;
 using Damas.Model;
-using Microsoft.Xna.Framework.Net;
-using Damas.DragAndDropTools;
 
 namespace Damas
 {
@@ -24,26 +22,14 @@ namespace Damas
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D fondoDelJuego;
-        // Fonts
-        SpriteFont scoreFont;
 
-        public enum GameState { SignIn, FindSession, CreateSession, 
-                                Start, InGame, GameOver}
-
-       
-
-        // Network stuff
-        NetworkSession networkSession;
-        
-        PacketWriter packetWriter = new PacketWriter();
-        PacketReader packetReader = new PacketReader();
-
-        GameState currentGameState = GameState.SignIn;
+        enum GameState { Start, InGame, GameOver };
+        GameState currentGameState = GameState.Start;
 
         Colores fichasNegras = Colores.Black;
         Colores fichasRojas = Colores.Red;
 
-        private DragAndDropControllerNET<Item> _dragDropController;
+        private DragAndDropController<Item> _dragDropController;
         Tablero tablero;
        
         //Variables para almacenar posicion actual del puntero
@@ -79,15 +65,9 @@ namespace Damas
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            Components.Add(new GamerServicesComponent(this));
-
-            //Network stuff
-            NetGameManager.InitPacketReader();
-            NetGameManager.InitPacketWriter();
 
             base.Initialize();
         }
-
 
         /// <summary>
         /// LoadContent will be called once per game and is the place to load
@@ -98,13 +78,12 @@ namespace Damas
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
        
-            _dragDropController = new DragAndDropControllerNET<Item>(this, spriteBatch);
+            _dragDropController = new DragAndDropController<Item>(this, spriteBatch);
             Components.Add(_dragDropController);
             
             tablero = new Tablero(Content, spriteBatch);
             SetupDraggableItems();
             fondoDelJuego = Content.Load<Texture2D>(@"Images/fondo");
-            scoreFont = Content.Load<SpriteFont>(@"Fonts/ScoreFont");
 
             // TODO: use this.Content to load your game content here
         }
@@ -248,17 +227,9 @@ namespace Damas
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-           
-            KeyboardState keyboardState = Keyboard.GetState();
-            GamePadState gamePadSate = GamePad.GetState(PlayerIndex.One);
-            // If player presses Enter or A button, restart game
-            if (keyboardState.IsKeyDown(Keys.P) ||
-            gamePadSate.Buttons.A == ButtonState.Pressed)
-            {
-               // _dragDropController.moverFicha(new Vector2(150, 20), new Vector2(70, 260));
-                
-            }
-                
+            // Allows the game to exit
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                this.Exit();
 
             //get the current state of the mouse (position, buttons, etc.)
             _currentMouse = Mouse.GetState();
@@ -270,37 +241,11 @@ namespace Damas
             //Verifica si llego una ficha al lado contrario para convertirla en Reina
             _dragDropController.coronarAReina();
 
-            // Only run the Update code if the game is currently active.
-            // This prevents the game from progressing while
-            // gamer services windows are open.
-            if (this.IsActive)
+            if (endGame())
             {
-                // Run different methods based on game state
-                switch (currentGameState)
-                {
-                    case GameState.SignIn:
-                        Update_SignIn();
-                        break;
-                    case GameState.FindSession:
-                        Update_FindSession();
-                        break;
-                    case GameState.CreateSession:
-                        Update_CreateSession();
-                        break;
-                    case GameState.Start:
-                        Update_Start(gameTime);
-                        break;
-                    case GameState.InGame:
-                        Update_InGame(gameTime);
-                        break;
-                    case GameState.GameOver:
-                        Update_GameOver(gameTime);
-                        break;
-                }
+                this.Exit();
+            
             }
-            // Update the network session and pump network messages
-            if (networkSession != null)
-                networkSession.Update();
 
             
             // TODO: Add your update logic here
@@ -314,384 +259,18 @@ namespace Damas
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            // Only draw when game is active
-            if (this.IsActive)
-            {
-                // Based on the current game state,
-                // call the appropriate method
-                switch (currentGameState)
-                {
-                    case GameState.SignIn:
-                    case GameState.FindSession:
-                    case GameState.CreateSession:
-                        GraphicsDevice.Clear(Color.DarkBlue);
-                        break;
-                    case GameState.Start:
-                        DrawStartScreen();
-                        break;
-                    case GameState.InGame:
-                        DrawInGameScreen(gameTime);
-                        break;
-                    case GameState.GameOver:
-                       // DrawGameOverScreen();
-                        break;
-                }
-            }
-            //GraphicsDevice.Clear(Color.Gray);
+            GraphicsDevice.Clear(Color.Gray);
 
-            //spriteBatch.Begin();
+            spriteBatch.Begin();
            // spriteBatch.Draw(texture, new Vector2(50,20), Color.White);
-           // spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
-           //tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
-          //foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
-            //spriteBatch.End();
+            spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
+           tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
+          foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
+            spriteBatch.End();
 
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
-        private void DrawStartScreen( )
-        {
-            // Clear screen
-            GraphicsDevice.Clear(Color.AliceBlue);
-            // Draw text for intro splash screen
-            spriteBatch.Begin( );
-            // Draw instructions
-            string text = "The guest player is Red color\n";
-            text += networkSession.Host.Gamertag + " is the Black color";
-            spriteBatch.DrawString(scoreFont, text,
-            new Vector2((Window.ClientBounds.Width / 2)
-            - (scoreFont.MeasureString(text).X / 2),
-            (Window.ClientBounds.Height / 2)
-            - (scoreFont.MeasureString(text).Y / 2)),
-            Color.SaddleBrown);
-            // If both gamers are there, tell gamers to press space bar or Start to begin
-            if (networkSession.AllGamers.Count == 2)
-            {
-                text = "(Game is ready. Press Spacebar or Start button to begin)";
-                spriteBatch.DrawString(scoreFont, text,
-                new Vector2((Window.ClientBounds.Width / 2)
-                - (scoreFont.MeasureString(text).X / 2),
-                (Window.ClientBounds.Height / 2)
-                - (scoreFont.MeasureString(text).Y / 2) + 60),
-                Color.SaddleBrown);
-            }
-            // If only one player is there, tell gamer you're waiting for players
-            else
-            {
-                text = "(Waiting for players)";
-                spriteBatch.DrawString(scoreFont, text,
-                new Vector2((Window.ClientBounds.Width / 2)
-                - (scoreFont.MeasureString(text).X / 2),
-                (Window.ClientBounds.Height / 2) + 60),
-                Color.SaddleBrown);
-            }
-            // Loop through all gamers and get their gamertags,
-            // then draw list of all gamers currently in the game
-            text = "\n\nCurrent Player(s):";
-            foreach (Gamer gamer in networkSession.AllGamers)
-            {
-                text += "\n" + gamer.Gamertag;
-            }
-            spriteBatch.DrawString(scoreFont, text,
-            new Vector2((Window.ClientBounds.Width / 2)
-            - (scoreFont.MeasureString(text).X / 2),
-            (Window.ClientBounds.Height / 2) + 90),
-            Color.SaddleBrown);
-            spriteBatch.End();
-        }
-
-        private void DrawInGameScreen(GameTime gameTime)
-        {
-            // Clear device
-            GraphicsDevice.Clear(Color.White);
-            spriteBatch.Begin( );
-
-            spriteBatch.Draw(fondoDelJuego, Vector2.Zero, null, Color.White);
-            tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
-            foreach (var item in _dragDropController.Items) { item.Draw(gameTime); }
-            spriteBatch.End();
-        }
-
-        # region Relacionado con el juego en redes
-
-        private void Update_GameOver(GameTime gameTime)
-        {
-            KeyboardState keyboardState = Keyboard.GetState( );
-            GamePadState gamePadSate = GamePad.GetState(PlayerIndex.One);
-            // If player presses Enter or A button, restart game
-            if (keyboardState.IsKeyDown(Keys.Enter) ||
-            gamePadSate.Buttons.A == ButtonState.Pressed)
-            {
-                // Send restart game message
-                packetWriter.Write((int)MessageType.RestartGame);
-                networkSession.LocalGamers[0].SendData(packetWriter,
-                SendDataOptions.Reliable);
-                RestartGame();
-            }
-            // If player presses Escape or B button, rejoin lobby
-            if (keyboardState.IsKeyDown(Keys.Escape) ||
-            gamePadSate.Buttons.B == ButtonState.Pressed)
-            {
-                // Send rejoin lobby message
-                packetWriter.Write((int)MessageType.RejoinLobby);
-                networkSession.LocalGamers[0].SendData(packetWriter,
-                SendDataOptions.Reliable);
-                RejoinLobby();
-            }
-            // Read any incoming messages
-            ProcessIncomingData(gameTime);
-        }
-        private void Update_InGame(GameTime gameTime)
-        {
-            // Update the local player
-           // UpdateLocalPlayer(gameTime);
-            // Read any incoming data
-            ProcessIncomingData(gameTime);
-            // Only host checks for collisions
-            /*if (networkSession.IsHost)
-            {*/
-                //get the current state of the mouse (position, buttons, etc.)
-                _currentMouse = Mouse.GetState();
-
-                //remember the mouseposition for use in this Update and subsequent Draw
-                _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
-
-
-                //Verifica si llego una ficha al lado contrario para convertirla en Reina
-                _dragDropController.coronarAReina();
-               
-            //}
-        }
-        protected void Update_SignIn()
-        {
-            // If no local gamers are signed in, show sign-in screen
-            if (Gamer.SignedInGamers.Count < 1)
-            {
-                Guide.ShowSignIn(1, false);
-            }
-            else
-            {
-                // Local gamer signed in, move to find sessions
-                currentGameState = GameState.FindSession;
-            }
-        }
-
-        private void Update_FindSession()
-        {
-            // Find sessions of the current game
-            AvailableNetworkSessionCollection sessions =
-            NetworkSession.Find(NetworkSessionType.SystemLink, 1, null);
-            if (sessions.Count == 0)
-            {
-                // If no sessions exist, move to the CreateSession game state
-                currentGameState = GameState.CreateSession;
-            }
-            else
-            {
-                // If a session does exist, join it, wire up events,
-                // and move to the Start game state
-                networkSession = NetworkSession.Join(sessions[0]);
-                WireUpEvents();
-                currentGameState = GameState.Start;
-            }
-        }
-
-        private void Update_CreateSession()
-        {
-            // Create a new session using SystemLink with a max of 1 local player
-            // and a max of 2 total players
-            networkSession = NetworkSession.Create(NetworkSessionType.SystemLink, 1, 2);
-            networkSession.AllowHostMigration = true;
-            networkSession.AllowJoinInProgress = false;
-            // Wire up events and move to the Start game state
-            WireUpEvents();
-            currentGameState = GameState.Start;
-        }
-
-        private void Update_Start(GameTime gameTime)
-        {
-            // Get local gamer
-            LocalNetworkGamer localGamer = networkSession.LocalGamers[0];
-            // Check for game start key or button press
-            // only if there are two players
-            if (networkSession.AllGamers.Count == 2)
-            {
-                // If space bar or Start button is pressed, begin the game
-                if (Keyboard.GetState( ).IsKeyDown(Keys.Space) ||
-                    GamePad.GetState(PlayerIndex.One).Buttons.Start ==
-                    ButtonState.Pressed)
-                    {   // Send message to other player that we're starting
-                        packetWriter.Write((int)MessageType.StartGame);
-                        localGamer.SendData(packetWriter, SendDataOptions.Reliable);
-                        // Call StartGame
-                        StartGame();
-                        
-                    }
-           }
-            // Process any incoming packets
-            ProcessIncomingData(gameTime);
-        }
-        protected void StartGame()
-        {
-            // Set game state to InGame
-            currentGameState = GameState.InGame;
-            
-        }
-        private void RejoinLobby()
-        {
-            // Switch dynamite and gears sprites
-            // as well as chaser versus chased
-           // SwitchPlayersAndReset(false);
-            currentGameState = GameState.Start;
-        }
-        private void RestartGame()
-        {
-            // Switch dynamite and gears sprites
-            // as well as chaser versus chased
-            //SwitchPlayersAndReset(true);
-            StartGame();
-        }
-
-        protected void UpdateTurns()
-        { 
-            //Se recibe el cambio de turno del otro jugador
-            bool turnoJugadorRojo = NetGameManager.packetReader.ReadBoolean();
-
-            // Se verifica si es el turno del jugador de color rojo
-            if (turnoJugadorRojo == true)
-            {
-                manejadorDeTurnos.turnoJugadorRojo = true;
-                manejadorDeTurnos.turnoJugadorNegro = false;
-            }
-            else
-            {
-                manejadorDeTurnos.turnoJugadorRojo = false;
-                manejadorDeTurnos.turnoJugadorNegro = true;
-            
-            }
-
-        
-        }
-      /*  protected void UpdateRemotePlayer(GameTime gameTime)
-        {
-            // Get the other (nonlocal) player
-            NetworkGamer theOtherGuy = GetOtherPlayer();
-            // Get the UserControlledSprite representing the other player
-            UserControlledSprite theOtherSprite = ((UserControlledSprite)theOtherGuy.Tag);
-            // Read in the new position of the other player
-            Vector2 otherGuyPos = packetReader.ReadVector2();
-            // If the sprite is being chased,
-            // retrieve and set the score as well
-            if (!theOtherSprite.isChasing)
-            {
-                int score = packetReader.ReadInt32();
-                theOtherSprite.score = score;
-            }
-            // Set the position
-            theOtherSprite.Position = otherGuyPos;
-            // Update only the frame of the other sprite
-            // (no need to update position because you just did!)
-            theOtherSprite.Update(gameTime, Window.ClientBounds, false);
-        }*/
-
-        protected NetworkGamer GetOtherPlayer()
-        {
-            // Search through the list of players and find the
-            // one that's remote
-            foreach (NetworkGamer gamer in networkSession.AllGamers)
-            {
-                if (!gamer.IsLocal)
-                {
-                    return gamer;
-                }
-            }
-            return null;
-        }
-        protected void ProcessIncomingData(GameTime gameTime)
-        {
-            // Process incoming data
-            LocalNetworkGamer localGamer = networkSession.LocalGamers[0];
-            NetGameManager.localGamer = networkSession.LocalGamers[0];
-            // While there are packets to be read...
-            while (localGamer.IsDataAvailable)
-            {
-                // Get the packet
-                NetworkGamer sender;
-                localGamer.ReceiveData(packetReader, out sender);
-                // Ignore the packet if you sent it
-                if (!sender.IsLocal)
-                {
-                    // Read messagetype from start of packet
-                    // and call appropriate method
-                    MessageType messageType = (MessageType)packetReader.ReadInt32();
-                    switch (messageType)
-                    {
-                        case MessageType.EndGame:
-                            EndGame();
-                            break;
-                        case MessageType.StartGame:
-                            StartGame();
-                            break;
-                        case MessageType.RejoinLobby:
-                            RejoinLobby();
-                            break;
-                        case MessageType.RestartGame:
-                            RestartGame();
-                            break;
-                        case MessageType.UpdatePlayerPos:
-                          //  UpdateRemotePlayer(gameTime);
-                            break;
-                        case MessageType.updateTurnos:
-                            UpdateTurns();
-                            break;
-                    }
-                }
-            }
-        }
-
-        protected void EndGame()
-        {
-            
-            currentGameState = GameState.GameOver;
-        }
-        protected void WireUpEvents()
-        {
-            // Wire up events for gamers joining and leaving
-            networkSession.GamerJoined += GamerJoined;
-            networkSession.GamerLeft += GamerLeft;
-        }
-        void GamerJoined(object sender, GamerJoinedEventArgs e)
-        {
-            // Gamer joined. Set the tag for the gamer to a new UserControlledSprite.
-            // If the gamer is the host, create a chaser; if not, create a chased.
-            if (e.Gamer.IsHost)
-            {
-                Colores colorJugador = Colores.Black;
-                NetGameManager.colorJugadorLocal = colorJugador;
-                NetGameManager.colorJugadorRemoto = Colores.Red;
-                e.Gamer.Tag = NetGameManager.colorJugadorLocal;
-            }
-            else
-            {
-                Colores colorJugador = Colores.Red;
-                NetGameManager.colorJugadorLocal = colorJugador;
-                NetGameManager.colorJugadorRemoto = Colores.Black;
-                e.Gamer.Tag = NetGameManager.colorJugadorLocal;
-            }
-        }
-
-        void GamerLeft(object sender, GamerLeftEventArgs e)
-        {
-            // Dispose of the network session, set it to null.
-            // Stop the soundtrack and go
-            // back to searching for sessions.
-            networkSession.Dispose( );
-            networkSession = null;
-           // trackInstance.Stop();
-            currentGameState = GameState.FindSession;
-        }
-
-        #endregion
     }
 }

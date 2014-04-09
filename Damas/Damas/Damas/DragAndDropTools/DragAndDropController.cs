@@ -359,7 +359,16 @@ namespace DragAndDrop
                     posFichaAEliminar = new Vector2(posInicial.X - 80, posInicial.Y + 80);
 
             //Recorro las fichas del tablero 
-           
+           /* foreach (var fichaEvaluada in _items)
+            {
+                // Verifico si la posicion de la ficha a eliminar es igual a la ficha que estoy evaluando
+                if (fichaEvaluada.Position.Equals(posFichaAEliminar))
+                {
+                    Remove(fichaEvaluada);                
+                }
+ 
+            }
+            */
             for (int i = _items.Count - 1; i >= 0; i--)
             {
                 for (int x = 70; x <= 630; x = x + 80)
@@ -376,31 +385,6 @@ namespace DragAndDrop
                 }
 
             }
-        }
-
-        public void moverFicha(Vector2 posInicialFicha, Vector2 posFinalFicha)
-        {
-
-            // Recorro el arreglo de fichas
-            for (int i = _items.Count - 1; i >= 0; i--)
-            {
-                for (int x = 70; x <= 630; x = x + 80)
-                {
-                    Ficha fichaEvaluada = _items.ElementAt(i);
-                    // Verifico si la ficha tiene la posicion que busco
-                    if (fichaEvaluada.Position.Equals(posInicialFicha))
-                    {
-                        //Cambio la posicion de la ficha, a la posicion a la quiero mover la ficha
-                        fichaEvaluada.Position = posFinalFicha;
-                        return;
-
-                    }
-
-                }
-
-            }
-
-        
         }
 
         #endregion
