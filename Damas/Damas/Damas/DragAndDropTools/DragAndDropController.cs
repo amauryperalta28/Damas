@@ -258,7 +258,7 @@ namespace Damas.DragAndDropTools
             
             //Se verifica si la ficha no se puede mover porque hay una ficha de otro color impidiendole avanzar
             //y si puede comersela
-            if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar1)==1 && estatusCasilla(posicionAEvaluar1).NohayUnaFicha == false &&
+            if (/*fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar1)==0 &&*/ estatusCasilla(posicionAEvaluar1).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar1).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer1).NohayUnaFicha == true)
             {
                 
@@ -270,7 +270,7 @@ namespace Damas.DragAndDropTools
                 }
                     
             }
-             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar2)==1 && estatusCasilla(posicionAEvaluar2).NohayUnaFicha == false &&
+             if ( /*fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar2)==1 &&*/ estatusCasilla(posicionAEvaluar2).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar2).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer2).NohayUnaFicha == true)
             {
                 
@@ -283,7 +283,7 @@ namespace Damas.DragAndDropTools
                        
  
             }
-             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar3)==1 && estatusCasilla(posicionAEvaluar3).NohayUnaFicha == false &&
+             if ( /*fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar3)==1 &&*/ estatusCasilla(posicionAEvaluar3).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar3).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer3).NohayUnaFicha == true)
             {
                 
@@ -295,7 +295,7 @@ namespace Damas.DragAndDropTools
                 }
                     
             }
-             if (fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar4)==1 && estatusCasilla(posicionAEvaluar4).NohayUnaFicha == false &&
+             if (/*fichaAEvaluar.canMove(fichaAEvaluar.Position, posicionAEvaluar4)==1 &&*/ estatusCasilla(posicionAEvaluar4).NohayUnaFicha == false &&
                estatusCasilla(posicionAEvaluar4).colorDeLaFicha != fichaAEvaluar.Color && estatusCasilla(posDespuesDeComer4).NohayUnaFicha == true)
             {
                 

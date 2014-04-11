@@ -23,15 +23,16 @@ namespace Damas
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D fondoDelJuego;
+        Texture2D pantallaDeInicio;
 
              
        /**  Variable de estado del juego, permite saber si el juego esta
            en la pantalla de inicio, en el juego o si el juego terminó.
         */
         GameState currentGameState = GameState.Start;
-
         Colores fichasNegras = Colores.Black;
         Colores fichasRojas = Colores.Red;
+        String ganador = "";
 
 
         private DragAndDropController<Item> _dragDropController;
@@ -41,8 +42,8 @@ namespace Damas
         /**Variables para almacenar posicion actual del puntero*/
         MouseState _currentMouse;
         Vector2 _currentMousePosition;          //La posición actual del mouse
-        
-        
+
+        SpriteFont gameOverFont;
 
         public Game1()
         {
@@ -92,6 +93,10 @@ namespace Damas
 
             // Se carga la imagen de fondo de madera
             fondoDelJuego = Content.Load<Texture2D>(@"Images/fondo");
+            pantallaDeInicio = Content.Load<Texture2D>(@"Images/startscreen");
+
+            gameOverFont = Content.Load<SpriteFont>(@"GameOver");
+
 
             // TODO: use this.Content to load your game content here
         }
@@ -136,16 +141,21 @@ namespace Damas
             int cantFichasNegras = _dragDropController.cantFichasNegras();
 
             // Se verifica si el numero de fichas de algun color es cero.
-            if (cantFichasNegras == 0 || cantFichasRojas == 0)
+            if (cantFichasNegras == 0  )
             {
-                
+                ganador = "Black Won!";
                 return true;
 
+            }
+            else if (cantFichasRojas == 0)
+            {
+                ganador = "Red Won!";
+                return true;
             }
             else
             {
                 return false;
-            
+
             }
         
         }
@@ -273,28 +283,61 @@ namespace Damas
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            KeyboardState keyboardState = Keyboard.GetState();
+            GamePadState gamePadSate = GamePad.GetState(PlayerIndex.One);
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            //get the current state of the mouse (position, buttons, etc.)
-            _currentMouse = Mouse.GetState();
-
-            //remember the mouseposition for use in this Update and subsequent Draw
-            _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
-
-            
-            //Verifica si llego una ficha al lado contrario para convertirla en Reina
-            _dragDropController.coronarAReina();
-
-            if (endGame())
+            if (currentGameState == GameState.Start)
             {
-                resetGame();
-                //this.Exit();
-            
+                // If player presses Enter or A button, restart game
+                if (keyboardState.IsKeyDown(Keys.Enter) ||
+                gamePadSate.Buttons.A == ButtonState.Pressed)
+                {
+                    currentGameState = GameState.InGame;
+                    
+                }
+ 
             }
 
+            else if (currentGameState == GameState.InGame)
+            {
+                //get the current state of the mouse (position, buttons, etc.)
+                _currentMouse = Mouse.GetState();
+
+                //remember the mouseposition for use in this Update and subsequent Draw
+                _currentMousePosition = new Vector2(_currentMouse.X, _currentMouse.Y);
+
+
+                //Verifica si llego una ficha al lado contrario para convertirla en Reina
+                _dragDropController.coronarAReina();
+
+                if (endGame())
+                {
+                    currentGameState = GameState.GameOver;
+                    
+                }
+
+            }
+            else if (currentGameState == GameState.GameOver)
+            {
+                // If player presses Enter or A button, restart game
+                if (keyboardState.IsKeyDown(Keys.R) ||
+                gamePadSate.Buttons.A == ButtonState.Pressed)
+                {
+                    resetGame();
+                }
+                // If player presses Enter or A button, restart game
+                if (keyboardState.IsKeyDown(Keys.M) ||
+                gamePadSate.Buttons.A == ButtonState.Pressed)
+                {
+                    currentGameState = GameState.Start;
+                }
+
             
+            
+            }
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -309,17 +352,32 @@ namespace Damas
             GraphicsDevice.Clear(Color.Gray);
 
             spriteBatch.Begin();
-           
-              // Dibuja el fondo de madera debajo del tablero
-                 spriteBatch.Draw( fondoDelJuego, Vector2.Zero, null, Color.White);
+            if( currentGameState == GameState.Start)
+            {
+                spriteBatch.Draw(pantallaDeInicio, Vector2.Zero, null, Color.White);
+                spriteBatch.DrawString(gameOverFont, "Press Enter to Start the game!", new Vector2(10, 500), Color.GhostWhite);
+            }
+            else if (currentGameState == GameState.InGame)
+            {
+                // Dibuja el fondo de madera debajo del tablero
+                spriteBatch.Draw(fondoDelJuego, Vector2.Zero, null, Color.White);
 
-             //  Se dibuja el tablero
-                 tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
+                //  Se dibuja el tablero
+                tablero.draw(spriteBatch, _currentMousePosition, _dragDropController);
 
-               // Se dibujan las fichas en el tablero
-                 foreach (var item in _dragDropController.Items) 
-                 { item.Draw(gameTime); }
-
+                // Se dibujan las fichas en el tablero
+                foreach (var item in _dragDropController.Items)
+                { item.Draw(gameTime); }
+            }
+            else if (currentGameState == GameState.GameOver)
+            {
+                // Dibuja el fondo de madera debajo del tablero
+                spriteBatch.Draw(fondoDelJuego, Vector2.Zero, null, Color.White);
+                
+                string winner = "                 "+ganador;
+                string text = winner+"\n                Game over\nPress R to restart the game\nPress M to go back to the start Screen";
+                spriteBatch.DrawString(gameOverFont, text, new Vector2(100, 300), Color.GhostWhite);
+            }
 
             spriteBatch.End();
 
